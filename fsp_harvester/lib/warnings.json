@@ -1,0 +1,33 @@
+{
+   "001": {
+      "message": "Unable to resolve guid using Accept headers for Linked Data",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "002": {
+      "message": "HTTP Response (203) is non-authoritative",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "003": {
+      "message": "HTTP Response indicates failure (500-range)",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "004": {
+      "message": "The resource does not follow the FAIR Signposting standard, which requires exactly one cite-as header, and at least one describedby header",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "005": {
+      "message": "The resource does not follow the FAIR Signposting standard, which requires any describedby links to also have a 'type' attribute indicating the Accept headers that should be sent with the request",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "006": {
+      "message": "GUID type not recognized",
+      "linkout": "",
+      "severity": "WARN"
+   }
+   
+}
