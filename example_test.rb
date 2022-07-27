@@ -4,11 +4,7 @@ require 'uri'
 require 'rdf'
 require 'rdf/turtle'
 require 'sparql'
-require_relative './fsp_harvester/lib/fsp_harvester'
-
-debug = false
-debug = true if ARGV and ARGV[0]
-VERSION = 'Apples-0.0.1'
+require 'fsp_harvester'
 
 def testGUID(guid:)
 

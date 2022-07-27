@@ -40,10 +40,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rspec", "~> 3.11"
   spec.add_dependency "rdf-adaptor", "~> 3.1"
   spec.add_dependency "xml-simple", "~> 1.1"
-  spec.add_dependency "rest-client", "~> 3.2"
+  spec.add_dependency "rest-client", "~> 2.1"
   spec.add_dependency "securerandom", "~> 0.1.0"
   spec.add_dependency "metainspector", "~>5.11.2"
-  spec.add_dependency "linkhead4r-processor", "~>0.1.7"
+  spec.add_dependency "linkheader-processor", "~>0.1.7"
   spec.add_dependency "parseconfig", "~>1.1"
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
