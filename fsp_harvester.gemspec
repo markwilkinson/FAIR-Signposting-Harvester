@@ -33,7 +33,18 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"
-
+  spec.add_dependency "rake", "~> 13.0"
+  spec.add_dependency "rubocop", "~> 1.7"
+  spec.add_dependency "linkeddata", "~> 3.2"
+  spec.add_dependency "json", "~> 2.0"
+  spec.add_dependency "rspec", "~> 3.11"
+  spec.add_dependency "rdf-adaptor", "~> 3.1"
+  spec.add_dependency "xml-simple", "~> 1.1"
+  spec.add_dependency "rest-client", "~> 3.2"
+  spec.add_dependency "securerandom", "~> 0.1.0"
+  spec.add_dependency "metainspector", "~>5.11.2"
+  spec.add_dependency "linkhead4r-processor", "~>0.1.7"
+  spec.add_dependency "parseconfig", "~>1.1"
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
 end

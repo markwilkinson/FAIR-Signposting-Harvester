@@ -3,6 +3,7 @@
 require_relative "fsp_harvester/version"
 require "json/ld"
 require "json/ld/preloaded"
+require "json"
 require "linkheader/processor"
 require "addressable"
 require "tempfile"
@@ -25,16 +26,16 @@ module FspHarvester
 
   class Utils
     # @@distillerknown = {} # global, hash of sha256 keys of message bodies - have they been seen before t/f
-    @warnings = JSON.parse(File.read("warnings.json"))
+    # @warnings = JSON.parse(File.read("warnings.json"))
     @meta = FspHarvester::MetadataObject.new
 
     def self.resolve_guid(guid:)
       @meta.finalURI = [guid]
       type, url = convertToURL(guid: guid)
-      links = false
+      links = Array.new
       unless type
-        @meta.warnings << ["006", url, ""]
-        @meta.comments << "WARN: GUID type not recognized.\n"
+        @meta.warnings << ["006", guid, ""]
+        @meta.comments << "FATAL: GUID type not recognized.\n"
       else
         links, @meta = resolve_url(url: url)
       end
@@ -102,18 +103,35 @@ module FspHarvester
         when "describedby"
           describedby += 1
           unless l.respond_to? "type"
-            @meta.warnings << ["005", url, header]
+            @meta.warnings << ["005", l.url, ""]
             @meta.comments << "WARN: The resource does not follow the FAIR Signposting standard, which requires any describedby links to also have a 'type' attribute\n"    
           end
         end
       end
+      if citeas > 1
+        self.check_for_conflicts(factory: factory)  # this merelty adsds to the metadata objects if there are conflicts
+      end
+
       unless citeas == 1 && describedby > 0
-        @meta.warnings << ["004", url, header]
+        @meta.warnings << ["004", "", ""]
         @meta.comments << "WARN: The resource does not follow the FAIR Signposting standard, which requires exactly one cite-as header, and at least one describedby header\n"
       end
       factory.all_links
     end
 
-    
+    def self.check_for_conflicts(factory:) # incoming: {"link1" => {"sectiontype1" => value, "sectiontype2" => value2}}
+      @meta.comments << "INFO: checking for conflicting cite-as links"
+      citeas = Array.new
+      factory.all_links.each do |link|
+        next unless link.relation == 'cite-as'
+        citeas << link.href
+      end
+      unless citeas == citeas.uniq
+        @meta.warnings << ["007", url, header]
+        @meta.comments << "WARN: The resource does not follow the FAIR Signposting standard: Found conflicting cite-as link headers\n"
+      else
+        @meta.comments << "INFO: No conflicting cite-as links found."
+      end
+    end
   end
 end
