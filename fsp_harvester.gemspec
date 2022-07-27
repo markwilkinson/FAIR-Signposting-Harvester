@@ -38,7 +38,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "linkeddata", "~> 3.2"
   spec.add_dependency "json", "~> 2.0"
   spec.add_dependency "rspec", "~> 3.11"
-  spec.add_dependency "rdf-adaptor", "~> 3.1"
   spec.add_dependency "xml-simple", "~> 1.1"
   spec.add_dependency "rest-client", "~> 2.1"
   spec.add_dependency "securerandom", "~> 0.1.0"
