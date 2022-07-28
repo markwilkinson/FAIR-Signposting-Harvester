@@ -28,6 +28,47 @@
       "message": "GUID type not recognized",
       "linkout": "",
       "severity": "WARN"
+   },
+   "007": {
+      "message": "Conflicting cite-as links",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "008": {
+      "message": "describedby link does not resolve",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "009": {
+      "message": "Content-type of described-by link does not match the type attribute in the link header itself",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "010": {
+      "message": "Content-type of response from described-by link is undefined or cannot be compared to the link type",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "011": {
+      "message": "The resource does not follow the FAIR Signposting standard, which encourages any item links to have a type attribute",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "012": {
+      "message": "Content-type of response from resolving an item doesn't match the item type attribute in the link header",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "013": {
+      "message": "Content-type of response from resolving an item is undefined or cannot be compared to the link type",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "014": {
+      "message": "Item link does not resolve",
+      "linkout": "",
+      "severity": "WARN"
    }
+
    
 }

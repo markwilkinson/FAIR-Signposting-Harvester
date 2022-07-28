@@ -1,13 +1,13 @@
 module FspHarvester
 
   class WebUtils
-    def self.fspfetch(url:, headers: ACCEPT_ALL_HEADER)  # we will try to retrieve turtle whenever possible
+    def self.fspfetch(url:, headers: ACCEPT_ALL_HEADER, method: :get)
       warn 'In fetch routine now.  '
 
       begin
         warn "executing call over the Web to #{url}"
         response = RestClient::Request.execute({
-                                                method: :get,
+                                                method: method,
                                                 url: url.to_s,
                                                 # user: user,
                                                 # password: pass,
@@ -26,7 +26,7 @@ module FspHarvester
         warn "EXCEPTION WITH RESPONSE! #{e.response}\n#{e.response.headers}"
         @meta.warnings << ["003", url, headers] if @meta
         @meta.comments << "WARN: HTTP error #{e} encountered when trying to resolve #{url}\n" if @meta
-        if e.response.code == 500
+        if (e.response.code == 500 or e.response.code == 404)
           return false
         else
           e.response
