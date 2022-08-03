@@ -92,7 +92,9 @@ module FspHarvester
 
     def process_json(body:); end
 
-    def process_ld(body:); end
+    def process_ld(body:)
+
+    end
 
     def parse_rdf(body:)
       unless body

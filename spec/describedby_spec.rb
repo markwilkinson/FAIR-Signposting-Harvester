@@ -52,11 +52,18 @@ describe DescribedBy do
       expect(hrefs.length == 1).to be true
     end
 
-    it 'should accept warn that the return content-type of the describedby link is incorrectly reported' do
+    it 'should find warn that the return content-type of the describedby link is incorrectly reported when they dont match' do
       guid = 'https://w3id.org/a2a-fair-metrics/11-http-described-iri-wrong-type/'
       links, metadata = FspHarvester::Utils.resolve_guid(guid: guid)
       warnings = extract_warning_ids(warnings: metadata.warnings)
       expect(warnings.include? '009').to be true
+    end
+
+    it 'should not find warn that the return content-type of the describedby link is incorrectly reported when they are correct' do
+      guid = 'https://w3id.org/a2a-fair-metrics/22-http-html-citeas-describedby-mixed/'
+      links, metadata = FspHarvester::Utils.resolve_guid(guid: guid)
+      warnings = extract_warning_ids(warnings: metadata.warnings)
+      expect(warnings.include? '009').to be false
     end
 
     it 'should find the describedby link in a json linkset' do

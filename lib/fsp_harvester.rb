@@ -136,14 +136,13 @@ module FspHarvester
       check_describedby_rules(describedby: describedby)
       check_item_rules(item: item)
 
-      uniqueciteas = Array.new
       if citeas.length > 1
         warn "INFO: multiple cite-as links found. Checking for conflicts\n"
         @meta.comments << "INFO: multiple cite-as links found. Checking for conflicts\n"
-        uniqueciteas = check_for_citeas_conflicts(citeas: citeas) # this adds to the metadata objects if there are conflicts, returns the list of unique citeas (SHOULD ONLY BE ONE!)
+        citeas = check_for_citeas_conflicts(citeas: citeas) # this adds to the metadata objects if there are conflicts, returns the list of unique citeas (SHOULD ONLY BE ONE!)
       end
 
-      unless uniqueciteas == 1 && describedby.length > 0
+      unless citeas.length == 1 && describedby.length > 0
         @meta.warnings << ['004', '', '']
         @meta.comments << "WARN: The resource does not follow the FAIR Signposting standard, which requires exactly one cite-as header, and at least one describedby header\n"
       end

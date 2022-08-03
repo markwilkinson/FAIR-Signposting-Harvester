@@ -19,32 +19,28 @@ module FspHarvester
         accepttype = {"Accept" => accept}  if accept
 
         response = self.attempt_to_resolve(link: link, headers: accepttype)
-        
-        reportedtype = response.headers[:content_type] # check if incoming type is what is claimed
-        reportedtype.gsub!(/(.*?);.*/, "#{$1}")  # remove the e.g. charset information
-        unless reportedtype == link.type
-          @meta.warnings << ['009', link.href, accepttype]
-          @meta.comments << "WARN: content-type of describedby link #{link.href} is not the same as the MIME type reported in its link header.\n"
-          next
-        end
 
-        detected_type = attempt_to_detect_type(body: response.body)
-        unless detected_type
+        known_type = attempt_to_detect_type(body: response.body)
+        unless known_type
           @meta.warnings << ['017', url, header]
           @meta.comments << "WARN: metadata format returned from #{url} using Accept header #{header} is not recognized.  Processing will end now.\n"
           next
         end
 
         # process according to detected type
-        case detected_type
+        case known_type
         when 'html'
+          @meta.comments << "INFO: Processing html"
           hvst.process_html(body: response.body, uri: db)
         when 'xml'
+          @meta.comments << "INFO: Processing xml"
           hvst.process_xml(body: response.body)
         when 'json'
+          @meta.comments << "INFO: Processing json"
           hvst.process_json(body: response.body)
-        when 'jsonld', 'rdfxml', 'turtle', 'triples'
-          hvst.process_ld(body: response.body)
+        when 'jsonld', 'rdfxml', 'turtle', 'ntriples', 'nquads'
+          @meta.comments << "INFO: Processing linked data"
+          hvst.process_ld(body: response.body, known_type: known_type)
         when 'specialist'
           warn "no specialized parsers so far"
         end
@@ -125,14 +121,14 @@ module FspHarvester
 
     def self.abbreviate_type(contenttype:)
       foundtype = nil
-      RDF_FORMATS.each do |type, vals|
+      RDF_FORMATS.merge(XML_FORMATS).merge(HTML_FORMATS).merge(JSON_FORMATS).each do |type, vals|
         @meta.comments << "INFO: testing #{type} MIME types"
-        if vals.include? contenttype
-          foundtype = type
-          @meta.comments << "INFO: detected #{type} MIME type"
-        end
+        next unless vals.include? contenttype
+        foundtype = type
+        @meta.comments << "INFO: detected a #{type} MIME type"
+        break
       end
-      return foundtype
+      foundtype
     end
   end
 end

@@ -13,7 +13,8 @@ RDF_FORMATS = {
                'text/rdf+n3', 'text/rdf+turtle'],
   # 'rdfa'    => ['text/xhtml+xml', 'application/xhtml+xml'],
   'rdfxml' => ['application/rdf+xml'],
-  'triples' => ['application/n-triples', 'application/n-quads', 'application/trig']
+  'ntriples' => ['application/n-triples', 'application/trig'],
+  'nquads' => ['application/n-quads']
 }
 
 XML_FORMATS = {

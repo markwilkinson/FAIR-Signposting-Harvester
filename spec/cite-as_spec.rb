@@ -136,6 +136,13 @@ describe CiteAs do
       expect(hrefs.include? guid).to be true
     end
 
+    it "should not produce a 004 error with citeas which has described-by and cite-as in mixed HTTP and HTML headers" do
+      guid = 'https://w3id.org/a2a-fair-metrics/22-http-html-citeas-describedby-mixed/'
+      links, metadata = FspHarvester::Utils.resolve_guid(guid: guid)
+      ids = extract_warning_ids(warnings: metadata.warnings)
+      expect(ids.include? '004').to be false
+    end
+
     it "should find PURL citeas which has citeas-describedby-item-license-type-author in HTTP headers" do
       guid = 'https://w3id.org/a2a-fair-metrics/23-http-citeas-describedby-item-license-type-author/'
       links, metadata = FspHarvester::Utils.resolve_guid(guid: guid)
