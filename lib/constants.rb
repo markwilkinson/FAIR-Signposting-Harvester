@@ -1,11 +1,13 @@
 ACCEPT_ALL_HEADER = { 'Accept' => 'text/turtle, application/ld+json, application/rdf+xml, text/xhtml+xml, application/n3, application/rdf+n3, application/turtle, application/x-turtle, text/n3, text/turtle, text/rdf+n3, text/rdf+turtle, application/n-triples' }
 
+ACCEPT_STAR_HEADER = {'Accept' => '*/*'}
+
 TEXT_FORMATS = {
   'text' => ['text/plain']
 }
 
 RDF_FORMATS = {
-  'jsonld' => ['application/ld+json', 'application/vnd.schemaorg.ld+json'],  # NEW FOR DATACITE
+  'jsonld' => ['application/ld+json','application/x-ld+json', 'application/vnd.schemaorg.ld+json'],  # NEW FOR DATACITE
   'turtle' => ['text/turtle', 'application/n3', 'application/rdf+n3',
                'application/turtle', 'application/x-turtle', 'text/n3', 'text/turtle',
                'text/rdf+n3', 'text/rdf+turtle'],
@@ -73,12 +75,10 @@ GUID_TYPES = { 'inchi' => Regexp.new(/^\w{14}-\w{10}-\w$/),
                'uri' => Regexp.new(%r{^\w+:/?/?[^\s]+$}) }
 
 CONFIG = File.exist?('config.conf') ? ParseConfig.new('config.conf') : {}
-if CONFIG['extruct'] && CONFIG['extruct']['command'] && !CONFIG['extruct']['command'].empty?
-  extruct = config['extruct']['command']
-end
-extruct = 'extruct' unless @extruct_command
+extruct = CONFIG.dig(:extruct, :command)
+extruct ||= 'extruct'
 extruct.strip!
-case @extruct
+case extruct
 when /[&|;`$\s]/
   abort 'The Extruct command in the config file appears to be subject to command injection.  I will not continue'
 when /echo/i
@@ -86,8 +86,8 @@ when /echo/i
 end
 EXTRUCT_COMMAND = extruct
 
-rdf_command = CONFIG['rdf']['command'] if CONFIG['rdf'] && CONFIG['rdf']['command'] && !CONFIG['rdf']['command'].empty?
-rdf_command = 'rdf' unless @rdf_command
+rdf_command = CONFIG.dig(:rdf, :command)
+rdf_command ||= 'rdf'
 rdf_command.strip
 case rdf_command
 when /[&|;`$\s]/
@@ -99,8 +99,6 @@ when !(/rdf$/ =~ $_)
 end
 RDF_COMMAND = rdf_command
 
-if CONFIG['tika'] && CONFIG['tika']['command'] && !CONFIG['tika']['command'].empty?
-  tika_command = CONFIG['tika']['command']
-end
-tika_command = 'http://localhost:9998/meta' unless @tika_command
+tika_command = CONFIG.dig(:tika, :command)
+tika_command ||= 'http://localhost:9998/meta'
 TIKA_COMMAND = tika_command

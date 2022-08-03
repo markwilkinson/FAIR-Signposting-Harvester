@@ -1,0 +1,8 @@
+[extruct]
+command="extruct"
+
+[rdf]
+command="/usr/local/bundle/bin/rdf"
+
+[tika]
+command="http://tika:9998/meta"

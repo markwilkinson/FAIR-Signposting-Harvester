@@ -1,0 +1,8 @@
+[extruct]
+command="extruct"
+
+[rdf]
+command="/home/osboxes/.rvm/gems/ruby-3.0.0/bin/rdf"
+
+[tika]
+command="http://tika:9998/meta"

@@ -1,6 +1,6 @@
 {
    "001": {
-      "message": "Unable to resolve guid using Accept headers for Linked Data",
+      "message": "Unable to resolve guid using default (*/*) Accept headers",
       "linkout": "",
       "severity": "WARN"
    },
@@ -68,7 +68,33 @@
       "message": "Item link does not resolve",
       "linkout": "",
       "severity": "WARN"
-   }
+   },
+   "015": {
+      "message": "Link headers do not include a link of type 'type', as required by the FAIR Signposting specification",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "016": {
+      "message": "Unable to resolve describedby link using Accept headers with the MIME type indicated in the link",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "017": {
+      "message": "Metadata format not recognized.",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "018": {
+      "message": "RDF parsing error - likely malformed RDF document.",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "019": {
+      "message": "HTML parsing error - unable to extract linked data from HTML.",
+      "linkout": "",
+      "severity": "WARN"
+   },
+
 
    
 }

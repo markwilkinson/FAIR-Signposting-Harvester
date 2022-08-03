@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    fsp_harvester (0.1.6)
+    fsp_harvester (0.1.7)
       json (~> 2.0)
       linkeddata (~> 3.2)
-      linkheaders-processor (~> 0.1.12)
+      linkheaders-processor (~> 0.1.13)
       metainspector (~> 5.11.2)
       parseconfig (~> 1.1)
       rake (~> 13.0)
@@ -126,7 +126,7 @@ GEM
       shex (~> 0.7)
       sparql (~> 3.2)
       sparql-client (~> 3.2)
-    linkheaders-processor (0.1.12)
+    linkheaders-processor (0.1.13)
       json (~> 2.0)
       json-ld (~> 3.2)
       json-ld-preloaded (~> 3.2)
