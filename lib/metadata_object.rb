@@ -1,6 +1,6 @@
 module FspHarvester
   class MetadataObject
-    attr_accessor :hash, :graph, :comments, :warnings, :guidtype, :full_response, :finalURI  # a hash of metadata # a RDF.rb graph of metadata  # an array of comments  # the type of GUID that was detected # will be an array of Net::HTTP::Response
+    attr_accessor :hash, :graph, :comments, :links, :warnings, :guidtype, :full_response, :finalURI  # a hash of metadata # a RDF.rb graph of metadata  # an array of comments  # the type of GUID that was detected # will be an array of Net::HTTP::Response
 
     def initialize(_params = {}) # get a name from the "new" call, or set a default
       @hash = {}
@@ -8,6 +8,7 @@ module FspHarvester
       @comments =  []
       @warnings =  []
       @full_response = []
+      @links = []
       @finalURI = []
     end
 

@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 require_relative '../lib/fsp_harvester'
+require_relative '../lib/fsp_metadata_harvester'
+require_relative '../lib/fsp_metadata_parser'
+require_relative '../lib/fsp_metadata_external_tools'
+
+
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

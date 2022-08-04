@@ -105,7 +105,6 @@ module FspHarvester
         contenttype = detected_type.content_type.first # comes back as array
         abbreviation = abbreviate_type(contenttype: contenttype)
         @meta.comments << "INFO: using content-type #{contenttype}.\n"
-        if detected_type
       else
         @meta.comments << "INFO: metadata does not appear to be in a linked data format.  Trying other options.\n"
       end

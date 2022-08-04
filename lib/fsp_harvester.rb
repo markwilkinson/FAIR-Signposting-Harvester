@@ -40,6 +40,7 @@ module FspHarvester
       links = Array.new
       if type
         links = resolve_url(url: url)
+        @meta.links << links
       else
         @meta.warnings << ['006', guid, '']
         @meta.comments << "FATAL: GUID type not recognized.\n"
