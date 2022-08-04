@@ -94,6 +94,16 @@
       "linkout": "",
       "severity": "WARN"
    },
+   "020": {
+      "message": "XML parsing error - unable to process XML document.",
+      "linkout": "",
+      "severity": "WARN"
+   },
+   "021": {
+      "message": "JSON parsing error - unable to process JSON document.",
+      "linkout": "",
+      "severity": "WARN"
+   },
 
 
    

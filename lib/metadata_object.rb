@@ -46,7 +46,7 @@ module FspHarvester
       File.open("/tmp/#{filename}", 'wb') { |f| f.write(Marshal.dump(meta)) }
     end
 
-    def self.checkRDFCache(body)
+    def self.checkRDFCache(body: )
       fs = File.join('/tmp/', '*_graphbody')
       bodies = Dir.glob(fs)
       g = RDF::Graph.new
@@ -70,7 +70,7 @@ module FspHarvester
       g
     end
 
-    def self.writeRDFCache(reader, body)
+    def self.writeRDFCache(reader:, body:)
       filename = Digest::MD5.hexdigest body
       graph = RDF::Graph.new
       reader.each_statement { |s| graph << s }
