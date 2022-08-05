@@ -35,7 +35,7 @@ module FspHarvester
 
     def self.resolve_guid(guid:)
       @meta = FspHarvester::MetadataObject.new
-      @meta.finalURI = [guid]
+      @meta.all_uris = [guid]
       type, url = convertToURL(guid: guid)
       links = Array.new
       if type
@@ -85,7 +85,7 @@ module FspHarvester
     def self.resolve_url(url:, method: :get, nolinkheaders: false, header: ACCEPT_STAR_HEADER)
       @meta.guidtype = 'uri' if @meta.guidtype.nil?
       warn "\n\n FETCHING #{url} #{header}\n\n"
-      response = FspHarvester::WebUtils.fspfetch(url: url, headers: header, method: method)
+      response = FspHarvester::WebUtils.fspfetch(url: url, headers: header, method: method, meta: @meta)
       warn "\n\n head #{response.headers.inspect}\n\n" if response
 
       unless response
@@ -94,7 +94,7 @@ module FspHarvester
         return []
       end
 
-      @meta.comments << "INFO: following redirection using this header led to the following URL: #{@meta.finalURI.last}.  Using the output from this URL for the next few tests..."
+      @meta.comments << "INFO: following redirection using this header led to the following URL: #{@meta.all_uris.last}.  Using the output from this URL for the next few tests..."
       @meta.full_response << response.body
 
       links = process_link_headers(response: response) unless nolinkheaders
@@ -104,7 +104,7 @@ module FspHarvester
     def self.process_link_headers(response:)
       warn "\n\n parsing #{response.headers}\n\n"
 
-      parser = LinkHeaders::Processor.new(default_anchor: @meta.finalURI.last)
+      parser = LinkHeaders::Processor.new(default_anchor: @meta.all_uris.last)
       parser.extract_and_parse(response: response)
       factory = parser.factory # LinkHeaders::LinkFactory
 

@@ -1,6 +1,6 @@
 module FspHarvester
   class MetadataObject
-    attr_accessor :hash, :graph, :comments, :links, :warnings, :guidtype, :full_response, :finalURI  # a hash of metadata # a RDF.rb graph of metadata  # an array of comments  # the type of GUID that was detected # will be an array of Net::HTTP::Response
+    attr_accessor :hash, :graph, :comments, :links, :warnings, :guidtype, :full_response, :all_uris  # a hash of metadata # a RDF.rb graph of metadata  # an array of comments  # the type of GUID that was detected # will be an array of Net::HTTP::Response
 
     def initialize(_params = {}) # get a name from the "new" call, or set a default
       @hash = {}
@@ -9,7 +9,7 @@ module FspHarvester
       @warnings =  []
       @full_response = []
       @links = []
-      @finalURI = []
+      @all_uris = []
     end
 
     def merge_hash(hash)
@@ -92,15 +92,15 @@ module FspHarvester
         warn 'FOUND data in cache'
         head = Marshal.load(File.read("/tmp/#{filename}_head"))
         body = Marshal.load(File.read("/tmp/#{filename}_body"))
-        finalURI = ''
-        finalURI = Marshal.load(File.read("/tmp/#{filename}_uri")) if File.exist?("/tmp/#{filename}_uri")
+        all_uris = ''
+        all_uris = Marshal.load(File.read("/tmp/#{filename}_uri")) if File.exist?("/tmp/#{filename}_uri")
         warn 'Returning....'
-        return [head, body, finalURI]
+        return [head, body, all_uris]
       end
       warn 'Not Found in Cache'
     end
 
-    def self.writeToCache(uri, headers, head, body, finalURI)
+    def self.writeToCache(uri, headers, head, body, all_uris)
       filename = Digest::MD5.hexdigest uri + headers.to_s
       warn "in writeToCache Writing to cache for #{filename}"
       headfilename = filename + '_head'
@@ -108,7 +108,7 @@ module FspHarvester
       urifilename = filename + '_uri'
       File.open("/tmp/#{headfilename}", 'wb') { |f| f.write(Marshal.dump(head)) }
       File.open("/tmp/#{bodyfilename}", 'wb') { |f| f.write(Marshal.dump(body)) }
-      File.open("/tmp/#{urifilename}", 'wb') { |f| f.write(Marshal.dump(finalURI)) }
+      File.open("/tmp/#{urifilename}", 'wb') { |f| f.write(Marshal.dump(all_uris)) }
     end
 
     def self.writeErrorToCache(uri, headers)
