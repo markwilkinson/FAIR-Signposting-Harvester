@@ -103,7 +103,7 @@
       "message": "JSON parsing error - unable to process JSON document.",
       "linkout": "",
       "severity": "WARN"
-   },
+   }
 
 
    

@@ -21,8 +21,8 @@ end
 
 def extract_warning_ids(warnings:)
   warn_ids = []
-  warnings.each do |id, _url, _msg|
-    warn_ids << id
+  warnings.each do |warn|
+    warn_ids << warn["id"]
   end
   warn_ids
 end

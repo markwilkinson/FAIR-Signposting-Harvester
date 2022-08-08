@@ -24,7 +24,7 @@ module FspHarvester
         hash = XmlSimple.xml_in(body)
       rescue
         @meta.comments << "CRITICAL: Malformed XML detected.  Cannot process metadata.\n"
-        @meta.warnings << ['020', '', '']
+        @meta.add_warning(['020', '', ''])
       end
       @meta.comments << "INFO: The XML is being merged in the metadata object\n"
       @meta.hash.merge hash
@@ -35,7 +35,7 @@ module FspHarvester
         hash = JSON.parse(body)
       rescue
         @meta.comments << "CRITICAL: Malformed JSON detected.  Cannot process metadata.\n"
-        @meta.warnings << ['021', '', '']
+        @meta.add_warning(['021', '', ''])
       end
       @meta.comments << "INFO: The JSON is being merged in the metadata object\n"
       @meta.hash.merge hash
@@ -48,20 +48,20 @@ module FspHarvester
     def parse_rdf(body:, content_type:)
       unless body
         @meta.comments << "CRITICAL: The response message body component appears to have no content.\n"
-        @meta.warnings << ['018', '', '']
+        @meta.add_warning(['018', '', ''])
         return
       end
 
       unless body.match(/\w/)
         @meta.comments << "CRITICAL: The response message body component appears to have no content.\n"
-        @meta.warnings << ['018', '', '']
+        @meta.add_warning(['018', '', ''])
         return
       end
 
       rdfformat = RDF::Format.for(content_type: content_type)
       unless rdfformat
         @meta.comments << "CRITICAL: Found what appears to be RDF (sample:  #{body[0..300].delete!("\n")}), but it could not find a parser.  Please report this error, along with the GUID of the resource, to the maintainer of the system.\n"
-        @meta.warnings << ['018', '', '']
+        @meta.add_warning(['018', '', ''])
         return
       end
 
@@ -77,7 +77,7 @@ module FspHarvester
           reader = rdfformat.reader.new(body)
         rescue Exception => e
           @meta.comments << "WARN: Though linked data was found, it failed to parse (Exception #{e}).  This likely indicates some syntax error in the data.  As a result, no metadata will be extracted from this message.\n"
-          @meta.warnings << ['018', '', '']
+          @meta.add_warning(['018', '', ''])
           return
         end
 
@@ -97,11 +97,11 @@ module FspHarvester
         rescue RDF::ReaderError => e
           @meta.comments << "CRITICAL: The Linked Data was malformed and caused the parser to crash with error message: #{e.message} ||  (sample of what was parsed:  #{body[0..300].delete("\n")})\n"
           warn "CRITICAL: The Linked Data was malformed and caused the parser to crash with error message: #{e.message} ||  (sample of what was parsed:  #{body[0..300].delete("\n")})\n"
-          @meta.warnings << ['018', '', '']
+          @meta.add_warning(['018', '', ''])
         rescue Exception => e
           meta.comments << "CRITICAL: An unknown error occurred while parsing the (apparent) Linked Data (sample of what was parsed:  #{body[0..300].delete("\n")}).  Moving on...\n"
           warn "\n\nCRITICAL: #{e.inspect} An unknown error occurred while parsing the (apparent) Linked Data (full body:  #{body}).  Moving on...\n"
-          @meta.warnings << ['018', '', '']
+          @meta.add_warning(['018', '', ''])
         end
       end
     end

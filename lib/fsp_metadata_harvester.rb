@@ -21,7 +21,7 @@ module FspHarvester
 
         abbreviation, content_type = attempt_to_detect_type(body: response.body, headers: response.headers)
         unless abbreviation
-          @meta.warnings << ['017', url, header]
+          @meta.add_warning(['017', url, header])
           @meta.comments << "WARN: metadata format returned from #{url} using Accept header #{header} is not recognized.  Processing will end now.\n"
           next
         end
@@ -56,7 +56,7 @@ module FspHarvester
       url = link.href
       response = FspHarvester::WebUtils.fspfetch(url: url, method: :get, headers: header)
       unless response
-        @meta.warnings << ['016', url, header]
+        @meta.add_warning(['016', url, header])
         @meta.comments << "WARN: Unable to resolve describedby link #{url} using HTTP Accept header #{header}.\n"
       end
       response
@@ -87,7 +87,7 @@ module FspHarvester
       end
 
       unless content_type
-        @meta.warnings << ['017', url, header]
+        @meta.add_warning(['017', url, header])
         @meta.comments << "WARN: metadata format returned from #{url} using Accept header #{header} is not recognized.  Processing will end now.\n"
       end
       [abbreviation, content_type]

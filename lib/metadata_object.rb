@@ -10,6 +10,8 @@ module FspHarvester
       @full_response = []
       @links = []
       @all_uris = []
+      @warn = File.read("./lib/warnings.json")
+      @warn = JSON.parse(@warn)
     end
 
     def merge_hash(hash)
@@ -24,6 +26,16 @@ module FspHarvester
 
     def rdf
       graph
+    end
+
+    def add_warning(warning)
+      id = warning[0]
+      url = warning[1]
+      headers = warning[2]
+      message = @warn[id]['message']
+      linkout = @warn[id]['linkout']
+      severity = @warn[id]['severity']
+      self.warnings << {"id" => id, "message" => message, "severity" => severity, "linkout" => linkout, "processed_url" => url, "accept_headers": headers}
     end
   end
 

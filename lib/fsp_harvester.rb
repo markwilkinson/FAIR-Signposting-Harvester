@@ -42,7 +42,7 @@ module FspHarvester
         links = resolve_url(url: url)
         @meta.links << links
       else
-        @meta.warnings << ['006', guid, '']
+        @meta.add_warning(['006', guid, ''])
         @meta.comments << "FATAL: GUID type not recognized.\n"
       end
       [links, @meta]
@@ -89,7 +89,7 @@ module FspHarvester
       warn "\n\n head #{response.headers.inspect}\n\n" if response
 
       unless response
-        @meta.warnings << ['001', url, header]
+        @meta.add_warning(['001', url, header])
         @meta.comments << "WARN: Unable to resolve #{url} using HTTP Accept header #{header}.\n"
         return []
       end
@@ -144,12 +144,12 @@ module FspHarvester
       end
 
       unless citeas.length == 1 && describedby.length > 0
-        @meta.warnings << ['004', '', '']
+        @meta.add_warning(['004', '', ''])
         @meta.comments << "WARN: The resource does not follow the FAIR Signposting standard, which requires exactly one cite-as header, and at least one describedby header\n"
       end
 
       unless types.length >=1
-        @meta.warnings << ['015', '', '']
+        @meta.add_warning(['015', '', ''])
         @meta.comments << "WARN: The resource does not follow the FAIR Signposting standard, which requires one or two 'type' link headers\n"
       end
     end

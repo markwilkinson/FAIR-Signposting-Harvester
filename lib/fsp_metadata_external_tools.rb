@@ -40,7 +40,7 @@ module FspHarvester
         warn "DIST RESULT: #{result}"
         if result !~ /@context/i # failure returns nil
           @meta.comments << "WARN: The Distiller tool failed to find parseable data in the body, perhaps due to incorrectly formatted HTML..\n"
-          @meta.warnings << ['018', '', '']
+          @meta.add_warning(['018', '', ''])
         else
           @meta.comments << "INFO: The Distiller found parseable data.  Parsing as JSON-LD\n"
           parse_rdf(result: result, content_type: "application/ld+json")
@@ -58,10 +58,10 @@ module FspHarvester
 
       if result.to_s.match(/(Failed\sto\sextract.*?)\n/)
         @meta.comments << "WARN: extruct threw an error #{Regexp.last_match(1)} when attempting to parse return value (message body) of #{uri}.\n"
-        @meta.warnings << ['019', '', '']
+        @meta.add_warning(['019', '', ''])
         if result.to_s.match(/(ValueError:.*?)\n/)
           @meta.comments << "WARN: extruct error was #{Regexp.last_match(1)}\n"
-          @meta.warnings << ['019', '', '']
+          @meta.add_warning(['019', '', ''])
         end
       elsif result.to_s.match(/^\s+?\{/) or result.to_s.match(/^\s+\[/) # this is JSON
         json = JSON.parse result
