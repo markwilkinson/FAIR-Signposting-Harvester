@@ -10,8 +10,9 @@ module FspHarvester
       @full_response = []
       @links = []
       @all_uris = []
-      @warn = File.read("./lib/warnings.json")
-      @warn = JSON.parse(@warn)
+      w = RestClient.get("https://raw.githubusercontent.com/markwilkinson/FAIR-Signposting-Harvester/master/lib/warnings.json")
+      #@warn = File.read("./lib/warnings.json")
+      @warn = JSON.parse(w)
     end
 
     def merge_hash(hash)
