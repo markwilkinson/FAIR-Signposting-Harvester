@@ -15,8 +15,14 @@ module FspHarvester
 
     def process_html(body:, uri:)
       tools = FspHarvester::ExternalTools.new(metadata: @meta)
-      tools.process_with_distiller(body: body)
-      tools.process_with_extruct(uri: uri)
+      result = tools.process_with_distiller(body: body)
+
+      jsonld, microdata, microformat, opengraph, rdfa = tools.process_with_extruct(uri: uri)
+      parse_rdf(body: jsonld, content_type: 'application/ld+json')
+      @meta.merge_hash(microdata)
+      @meta.merge_hash(microformat) 
+      @meta.merge_hash(opengraph) 
+      parse_rdf(body: rdfa, content_type: 'application/ld+json')
     end
 
     def process_xml(body:)
@@ -46,6 +52,10 @@ module FspHarvester
     end
 
     def parse_rdf(body:, content_type:)
+      self.class.parse_rdf(body: body, content_type: content_type)
+    end
+
+    def self.parse_rdf(body:, content_type:)
       unless body
         @meta.comments << "CRITICAL: The response message body component appears to have no content.\n"
         @meta.add_warning(['018', '', ''])

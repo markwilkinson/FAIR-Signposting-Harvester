@@ -1,4 +1,4 @@
-module FspHarvester
+module HarvesterTools
   class MetadataObject
     attr_accessor :hash, :graph, :comments, :links, :warnings, :guidtype, :full_response, :all_uris  # a hash of metadata # a RDF.rb graph of metadata  # an array of comments  # the type of GUID that was detected # will be an array of Net::HTTP::Response
 

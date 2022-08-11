@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-module FspHarvester
+module HarvesterTools
   class Error < StandardError
   end
 
   class MetadataHarvester
-    def self.extract_metadata(links: [], metadata: FspHarvester::MetadataObject.new)
+    def self.extract_metadata(links: [], metadata: HarvesterTools::MetadataObject.new)
       @meta = metadata
       @meta.comments << 'INFO:  now collecting both linked data and hash-style data using the harvested links'
 
       describedby = links.select { |l| l if l.relation == 'describedby' }
 
-      hvst = FspHarvester::MetadataParser.new(metadata_object: @meta) # put here because the class variable for detecting duplicates should apply to all URIs
+      hvst = HarvesterTools::MetadataParser.new(metadata_object: @meta) # put here because the class variable for detecting duplicates should apply to all URIs
       describedby.each do |link|
         accepttype = ACCEPT_STAR_HEADER
         accept = link.respond_to?('type') ? link.type : nil
@@ -54,7 +54,7 @@ module FspHarvester
         @meta.comments << "INFO:  link #{link.href} has no MIME type, defaulting to */*"
       end
       url = link.href
-      response = FspHarvester::WebUtils.fspfetch(url: url, method: :get, headers: header)
+      response = HarvesterTools::WebUtils.fspfetch(url: url, method: :get, headers: header)
       unless response
         @meta.add_warning(['016', url, header])
         @meta.comments << "WARN: Unable to resolve describedby link #{url} using HTTP Accept header #{header}.\n"
