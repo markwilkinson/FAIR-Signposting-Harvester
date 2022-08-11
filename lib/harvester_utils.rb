@@ -11,7 +11,7 @@ module HarvesterTools
       links = Array.new
       if type
         links = resolve_url(url: url)
-        @meta.links << links
+        @meta.links = @meta.links | links
       else
         @meta.add_warning(['006', guid, ''])
         @meta.comments << "FATAL: GUID type not recognized.\n"
@@ -68,7 +68,7 @@ module HarvesterTools
       parser = LinkHeaders::Processor.new(default_anchor: @meta.all_uris.last)
       parser.extract_and_parse(response: response)
       factory = parser.factory # LinkHeaders::LinkFactory
-      FspHarvester::Utils.signpostingcheck(factory: factory)
+      FspHarvester::Utils.signpostingcheck(factory: factory, metadata: @meta)
       factory.all_links
     end
   end

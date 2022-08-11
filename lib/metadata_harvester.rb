@@ -30,16 +30,16 @@ module HarvesterTools
         case abbreviation
         when 'html'
           @meta.comments << 'INFO: Processing html'
-          hvst.process_html(body: response.body, uri: link)
+          hvst.process_html(body: response.body, uri: link, metadata: @meta)
         when 'xml'
           @meta.comments << 'INFO: Processing xml'
-          hvst.process_xml(body: response.body)
+          hvst.process_xml(body: response.body, metadata: @meta)
         when 'json'
           @meta.comments << 'INFO: Processing json'
-          hvst.process_json(body: response.body)
+          hvst.process_json(body: response.body, metadata: @meta)
         when 'jsonld', 'rdfxml', 'turtle', 'ntriples', 'nquads'
           @meta.comments << 'INFO: Processing linked data'
-          hvst.process_ld(body: response.body, content_type: content_type)
+          hvst.process_ld(body: response.body, content_type: content_type, metadata: @meta)
         when 'specialist'
           warn 'no specialized parsers so far'
         end

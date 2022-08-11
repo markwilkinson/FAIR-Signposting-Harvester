@@ -115,11 +115,12 @@ describe CiteAs do
       expect(hrefs.include? guid).to be true
     end
 
-    it 'should add a warning 004 for a URL which has multiple, conflicting cite-as links' do
+    it 'should issue a warning 004 for a URL which has multiple link types for a link, but missing a describedby' do
       guid = 'https://w3id.org/a2a-fair-metrics/19-html-citeas-multiple-rels/'
       links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
       warnings = extract_warning_ids(warnings: metadata.warnings)
       expect(warnings.include? '004').to be true
+      expect(links.length == 6).to be true
     end
 
     it 'should add a warning 004 for when citeas differs between hTML and HTTP links' do

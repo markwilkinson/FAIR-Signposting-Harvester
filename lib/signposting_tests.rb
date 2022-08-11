@@ -1,4 +1,5 @@
-def check_for_citeas_conflicts(citeas: )
+def check_for_citeas_conflicts(citeas:, metadata: )
+  @meta = metadata
   @meta.comments << 'INFO: checking for conflicting cite-as links'
   citeas_hrefs = Hash.new
   citeas.each do |link|
@@ -6,7 +7,7 @@ def check_for_citeas_conflicts(citeas: )
     @meta.comments << "INFO: Adding citeas #{link.href} to the testing queue."
     citeas_hrefs[link.href] = link
   end
-
+#warn "finalhash #{citeas_hrefs}"
   if citeas_hrefs.length > 1
     @meta.comments << 'INFO: Found multiple non-identical cite-as links.'
     @meta.add_warning(['007', '', ''])
@@ -16,7 +17,8 @@ def check_for_citeas_conflicts(citeas: )
 end
 
 
-def check_describedby_rules(describedby:)
+def check_describedby_rules(describedby:, metadata:)
+  @meta = metadata
   describedby.each do |l|
     unless l.respond_to? 'type'
       @meta.add_warning(['005', l.href, ''])
@@ -51,7 +53,8 @@ def check_describedby_rules(describedby:)
   end
 end
 
-def check_item_rules(item:)
+def check_item_rules(item:, metadata:)
+  @meta = metadata
   item.each do |l| # l = LinkHeaders::Link
     unless l.respond_to? 'type'
       @meta.add_warning(['011', l.href, ''])

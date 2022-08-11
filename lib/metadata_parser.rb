@@ -13,7 +13,8 @@ module HarvesterTools
       @meta = metadata_object
     end
 
-    def process_html(body:, uri:)
+    def process_html(body:, uri:, metadata:)
+      @meta = metadata
       tools = HarvesterTools::ExternalTools.new(metadata: @meta)
       result = tools.process_with_distiller(body: body)
 
@@ -25,7 +26,8 @@ module HarvesterTools
       parse_rdf(body: rdfa, content_type: 'application/ld+json')
     end
 
-    def process_xml(body:)
+    def process_xml(body:, metadata:)
+      @meta = metadata
       begin
         hash = XmlSimple.xml_in(body)
       rescue
@@ -36,7 +38,8 @@ module HarvesterTools
       @meta.hash.merge hash
     end
 
-    def process_json(body:)
+    def process_json(body:, metadata:)
+      @meta = metadata
       begin
         hash = JSON.parse(body)
       rescue
@@ -47,15 +50,17 @@ module HarvesterTools
       @meta.hash.merge hash
     end
 
-    def process_ld(body:, content_type:)
-      parse_rdf(body: body, content_type: content_type)
+    def process_ld(body:, content_type:, metadata:)
+      @meta = metadata
+      parse_rdf(body: body, content_type: content_type, metadata: @meta)
     end
 
-    def parse_rdf(body:, content_type:)
-      self.class.parse_rdf(body: body, content_type: content_type)
+    def parse_rdf(body:, content_type:, metadata:)
+      self.class.parse_rdf(body: body, content_type: content_type, metadata: metadata)
     end
 
-    def self.parse_rdf(body:, content_type:)
+    def self.parse_rdf(body:, content_type:, metadata:)
+      @meta = metadata
       unless body
         @meta.comments << "CRITICAL: The response message body component appears to have no content.\n"
         @meta.add_warning(['018', '', ''])

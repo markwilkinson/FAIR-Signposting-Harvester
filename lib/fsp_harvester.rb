@@ -36,13 +36,13 @@ module FspHarvester
         end
       end
 
-      check_describedby_rules(describedby: describedby)
-      check_item_rules(item: item)
+      check_describedby_rules(describedby: describedby, metadata: @meta)
+      check_item_rules(item: item, metadata: @meta)
 
       if citeas.length > 1
         warn "INFO: multiple cite-as links found. Checking for conflicts\n"
         @meta.comments << "INFO: multiple cite-as links found. Checking for conflicts\n"
-        citeas = check_for_citeas_conflicts(citeas: citeas) # this adds to the metadata objects if there are conflicts, returns the list of unique citeas (SHOULD ONLY BE ONE!)
+        citeas = check_for_citeas_conflicts(citeas: citeas, metadata: @meta) # this adds to the metadata objects if there are conflicts, returns the list of unique citeas (SHOULD ONLY BE ONE!)
       end
 
       unless citeas.length == 1 && describedby.length > 0
