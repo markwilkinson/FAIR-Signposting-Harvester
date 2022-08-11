@@ -1,7 +1,7 @@
 module HarvesterTools
 
   class WebUtils
-    def self.fspfetch(url:, headers: ACCEPT_ALL_HEADER, method: :get, meta: FspHarvester::MetadataObject.new)
+    def self.fspfetch(url:, headers: ACCEPT_ALL_HEADER, method: :get, meta: HarvesterTools::MetadataObject.new)
       warn 'In fetch routine now.  '
 
       begin
