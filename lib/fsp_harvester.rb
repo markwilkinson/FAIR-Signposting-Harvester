@@ -1,22 +1,3 @@
-# frozen_string_literal: true
-
-require 'json/ld'
-require 'json/ld/preloaded'
-require 'json'
-require 'linkheaders/processor'
-require 'addressable'
-require 'tempfile'
-require 'xmlsimple'
-require 'nokogiri'
-require 'parseconfig'
-require 'rest-client'
-require 'cgi'
-require 'digest'
-require 'open3'
-require 'metainspector'
-require 'rdf/xsd'
-
-
 module FspHarvester
   class Error < StandardError
   end
