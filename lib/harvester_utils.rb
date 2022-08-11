@@ -21,6 +21,10 @@ require_relative './constants'
 require_relative './web_utils'
 require_relative './signposting_tests'
 require_relative './metadata_harvester'
+require_relative './metadata_object'
+require_relative './fsp_harvester'
+require_relative './harvester_utils'
+require_relative './external_tools'
 require_relative './metadata_parser'
 
 

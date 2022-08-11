@@ -9,7 +9,7 @@ module HarvesterTools
 
     @@distillerknown = {}
 
-    def initialize(metadata_object: FspHarvester::MetadataObject.new)
+    def initialize(metadata_object: HarvesterTools::MetadataObject.new)
       @meta = metadata_object
     end
 
@@ -75,7 +75,7 @@ module HarvesterTools
         return
       end
 
-      graph = FspHarvester::Cache.checkRDFCache(body: body)
+      graph = HarvesterTools::Cache.checkRDFCache(body: body)
       if graph.size > 0
         warn "\n\n\n unmarshalling graph from cache\n\ngraph size #{graph.size}\n\n"
         @meta.merge_rdf(graph.to_a)
@@ -98,7 +98,7 @@ module HarvesterTools
           end
           reader = rdfformat.reader.new(body) # have to re-read it here, but now its safe because we have already caught errors
           warn 'WRITING TO CACHE'
-          FspHarvester::Cache.writeRDFCache(reader: reader, body: body) # write to the special RDF graph cache
+          HarvesterTools::Cache.writeRDFCache(reader: reader, body: body) # write to the special RDF graph cache
           warn 'WRITING DONE'
           reader = rdfformat.reader.new(body)  # frustrating that we cannot rewind!
           warn 'RE-READING DONE'

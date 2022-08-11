@@ -74,13 +74,7 @@ module HarvesterTools
         microformat = json['microformat'].first if json['microformat'].any?
         opengraph = json['opengraph'].first if json['opengraph'].any?
         rdfa = json['rdfa'].to_json if json['rdfa'].any?
-        # parse_rdf(body: json['json-ld'].to_json, content_type: 'application/ld+json') if json['json-ld'].any? # RDF
-        # @meta.merge_hash(json['microdata'].first) if json['microdata'].any?
-        # @meta.merge_hash(json['microformat'].first) if json['microformat'].any?
-        # @meta.merge_hash(json['opengraph'].first) if json['opengraph'].any?
-        # parse_rdf(body: json['rdfa'].to_json, content_type: 'application/ld+json') if json['rdfa'].any? # RDF
-
-        @meta.merge_hash(json.first) if json.first.is_a? Hash
+        # @meta.merge_hash(json.first) if json.first.is_a? Hash
       else
         @meta.comments << "WARN: the extruct tool failed to find parseable data at #{uri}\n"
       end
