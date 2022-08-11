@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'fsp_harvester/version'
 require 'json/ld'
 require 'json/ld/preloaded'
 require 'json'
@@ -16,12 +15,6 @@ require 'digest'
 require 'open3'
 require 'metainspector'
 require 'rdf/xsd'
-require_relative './metadata_object'
-require_relative './constants'
-require_relative './web_utils'
-require_relative './signposting_tests'
-require_relative './fsp_metadata_harvester'
-require_relative './fsp_metadata_parser'
 
 
 module FspHarvester
