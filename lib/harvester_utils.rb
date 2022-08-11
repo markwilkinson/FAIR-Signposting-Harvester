@@ -68,11 +68,7 @@ module HarvesterTools
       parser = LinkHeaders::Processor.new(default_anchor: @meta.all_uris.last)
       parser.extract_and_parse(response: response)
       factory = parser.factory # LinkHeaders::LinkFactory
-
-      warn "\n\n length bfore #{factory.all_links.length}\n\n"
-      signpostingcheck(factory: factory)
-      warn "\n\n length aftr #{factory.all_links.length}\n\n"
-      warn "\n\n links #{factory.all_links}\n\n"
+      FspHarvester::Utils.signpostingcheck(factory: factory)
       factory.all_links
     end
   end

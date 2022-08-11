@@ -1,3 +1,5 @@
+
+require_relative 'harvester'
 module FspHarvester
   class Error < StandardError
   end
