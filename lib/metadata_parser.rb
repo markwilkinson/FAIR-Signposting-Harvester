@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module FspHarvester
+module HarvesterTools
   class Error < StandardError
   end
 
@@ -14,7 +14,7 @@ module FspHarvester
     end
 
     def process_html(body:, uri:)
-      tools = FspHarvester::ExternalTools.new(metadata: @meta)
+      tools = HarvesterTools::ExternalTools.new(metadata: @meta)
       result = tools.process_with_distiller(body: body)
 
       jsonld, microdata, microformat, opengraph, rdfa = tools.process_with_extruct(uri: uri)
