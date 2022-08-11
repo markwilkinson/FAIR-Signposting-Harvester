@@ -25,7 +25,7 @@ def check_describedby_rules(describedby:)
     type = l.type if l.respond_to? 'type'
     type ||= '*/*'
     header = { accept: type }
-    response = FspHarvester::WebUtils.fspfetch(url: l.href, headers: header, method: :head)
+    response = HarvesterTools::WebUtils.fspfetch(url: l.href, headers: header, method: :head)
     if response
       responsetype = response.headers[:content_type]
       @meta.comments << "INFO: describedby link responds with content type #{responsetype}\n"
@@ -60,7 +60,7 @@ def check_item_rules(item:)
     type = l.type if l.respond_to? 'type'
     type ||= '*/*' # this becomes a frozen string
     header = { accept: type }
-    response = FspHarvester::WebUtils.fspfetch(url: l.href, headers: header, method: :head)
+    response = HarvesterTools::WebUtils.fspfetch(url: l.href, headers: header, method: :head)
 
     if response
       if response.headers[:content_type] and type != '*/*'
