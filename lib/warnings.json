@@ -1,107 +1,119 @@
 {
    "001": {
       "message": "Unable to resolve guid using default (*/*) Accept headers",
-      "linkout": "",
+      "linkout": [{"FAIR Principle": "https://www.go-fair.org/fair-principles/metadata-retrievable-identifier-standardised-communication-protocol/"},
+                  {"FAIRsharing": "https://doi.org/10.25504/FAIRsharing.cd2f9e"} 
+               ],
       "severity": "WARN"
    },
    "002": {
       "message": "HTTP Response (203) is non-authoritative",
-      "linkout": "",
+      "linkout": [{"Documentation": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/203"}],
       "severity": "WARN"
    },
    "003": {
       "message": "HTTP Response indicates failure (500-range)",
-      "linkout": "",
+      "linkout": [{"Documentation": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500"}],
       "severity": "WARN"
    },
    "004": {
       "message": "The resource does not follow the FAIR Signposting standard, which requires exactly one cite-as header, and at least one describedby header",
-      "linkout": "",
+      "linkout": [{"Documentation": "http://www.signposting.org/FAIR/#level1"}],
       "severity": "WARN"
    },
    "005": {
       "message": "The resource does not follow the FAIR Signposting standard, which requires any describedby links to also have a 'type' attribute indicating the Accept headers that should be sent with the request",
-      "linkout": "",
+      "linkout": [{"Documentation": "http://www.signposting.org/FAIR/#level1"}],
       "severity": "WARN"
    },
    "006": {
       "message": "GUID type not recognized",
-      "linkout": "",
+      "linkout": [{"FAIRsharing": "https://fairsharing.org/search?fairsharingRegistry=Standard&recordType=identifier_schema&page=1"}],
       "severity": "WARN"
    },
    "007": {
       "message": "Conflicting cite-as links",
-      "linkout": "",
+      "linkout": [{"Documentation": "http://www.signposting.org/FAIR/#level1"}],
       "severity": "WARN"
    },
    "008": {
       "message": "describedby link does not resolve",
-      "linkout": "",
+      "linkout": [{"Documentation": "http://www.signposting.org/FAIR/#level1"}],
       "severity": "WARN"
    },
    "009": {
       "message": "Content-type of described-by link does not match the type attribute in the link header itself",
-      "linkout": "",
+      "linkout": [{"Documentation": "http://www.signposting.org/FAIR/#level1"},
+                  {"Documentation": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type"}],
       "severity": "WARN"
    },
    "010": {
       "message": "Content-type of response from described-by link is undefined or cannot be compared to the link type",
-      "linkout": "",
+      "linkout": [{"Documentation": "http://www.signposting.org/FAIR/#level1"}],
       "severity": "WARN"
    },
    "011": {
       "message": "The resource does not follow the FAIR Signposting standard, which encourages any item links to have a type attribute",
-      "linkout": "",
+      "linkout": [{"Documentation": "http://www.signposting.org/FAIR/#level1"}],
       "severity": "WARN"
    },
    "012": {
       "message": "Content-type of response from resolving an item doesn't match the item type attribute in the link header",
-      "linkout": "",
+      "linkout": [{"Documentation": "http://www.signposting.org/FAIR/#level1"},
+                  {"Documentation": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type"}],
       "severity": "WARN"
    },
    "013": {
       "message": "Content-type of response from resolving an item is undefined or cannot be compared to the link type",
-      "linkout": "",
+      "linkout": [{"Documentation": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type"}],
       "severity": "WARN"
    },
    "014": {
       "message": "Item link does not resolve",
-      "linkout": "",
+      "linkout": [{"Documentation": "http://www.signposting.org/FAIR/#level1"}],
       "severity": "WARN"
    },
    "015": {
       "message": "Link headers do not include a link of type 'type', as required by the FAIR Signposting specification",
-      "linkout": "",
+      "linkout": [{"Documentation": "http://www.signposting.org/FAIR/#level1"}],
       "severity": "WARN"
    },
    "016": {
       "message": "Unable to resolve describedby link using Accept headers with the MIME type indicated in the link",
-      "linkout": "",
+      "linkout": [{"Documentation": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation"}],
       "severity": "WARN"
    },
    "017": {
       "message": "Metadata format not recognized.",
-      "linkout": "",
+      "linkout": [{"FAIRsharing": "https://fairsharing.org/search?subjects=Computer%2520Science,subject%2520agnostic&page=1&recordType=model_and_format"}],
       "severity": "WARN"
    },
    "018": {
       "message": "RDF parsing error - likely malformed RDF document.",
-      "linkout": "",
+      "linkout": [{"FAIRsharing": "https://fairsharing.org/FAIRsharing.p77ph9"},
+                  {"Documentation": "http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/"},
+                  {"Validator": "http://rdf.greggkellogg.net/distiller"}],
       "severity": "WARN"
    },
    "019": {
       "message": "HTML parsing error - unable to extract linked data from HTML.",
-      "linkout": "",
+      "linkout": [{"FAIRsharing": "https://fairsharing.org/FAIRsharing.YugnuL"},
+                  {"Documentation": "https://www.w3.org/TR/html53/"},
+                  {"validator": "https://validator.w3.org/"}],
       "severity": "WARN"
    },
    "020": {
       "message": "XML parsing error - unable to process XML document.",
-      "linkout": "",
+      "linkout": [{"FAIRsharing": "https://fairsharing.org/FAIRsharing.b5cc91"},
+                  {"Documentation": "https://www.w3.org/TR/xml/"},
+                  {"Validator": "https://www.xmlvalidation.com/"}],
       "severity": "WARN"
    },
    "021": {
       "message": "JSON parsing error - unable to process JSON document.",
-      "linkout": "",
+      "linkout": [{"FAIRsharing": "https://fairsharing.org/FAIRsharing.5bbab9"},
+                  {"Documentation": "http://dx.doi.org/10.17487/RFC8259"},
+                  {"Validator": "https://jsononline.net/json-validator"}],
       "severity": "WARN"
    }
 }
