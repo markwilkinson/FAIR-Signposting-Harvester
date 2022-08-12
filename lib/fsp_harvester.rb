@@ -12,7 +12,7 @@ module FspHarvester
       links.each do |l|
         db << l if l.relation == 'describedby'
       end
-      HarvesterTools::MetadataHarvester.extract_metadata(links: db, metadata: @meta)  # everything is gathered into the @meta metadata object
+      HarvesterTools::MetadataHarvester.extract_metadata_from_links(links: db, metadata: @meta)  # everything is gathered into the @meta metadata object
       @meta
     end
 

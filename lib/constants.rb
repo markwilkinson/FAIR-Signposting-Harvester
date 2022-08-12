@@ -69,11 +69,14 @@ SELF_IDENTIFIER_PREDICATES = [
   'https://schema.org/identifier'
 ]
 
-GUID_TYPES = { 'inchi' => Regexp.new(/^\w{14}-\w{10}-\w$/),
-               'doi' => Regexp.new(%r{^10.\d{4,9}/[-._;()/:A-Z0-9]+$}i),
-               'handle1' => Regexp.new(%r{^[^/]+/[^/]+$}i),
-               'handle2' => Regexp.new(%r{^\d{4,5}/[-._;()/:A-Z0-9]+$}i), # legacy style  12345/AGB47A
-               'uri' => Regexp.new(%r{^\w+:/?/?[^\s]+$}) }
+GUID_TYPES = { 
+  'inchi' => Regexp.new(/^\w{14}-\w{10}-\w$/),
+  'doi' => Regexp.new(%r{^10.\d{4,9}/[-._;()/:A-Z0-9]+$}i),
+  'handle1' => Regexp.new(%r{^[^/]+/[^/]+$}i),
+  'handle2' => Regexp.new(%r{^\d{4,5}/[-._;()/:A-Z0-9]+$}i), # legacy style  12345/AGB47A
+  'uri' => Regexp.new(%r{^\w+:/?/?[^\s]+$}),
+  'ark' => Regexp.new(%r{^ark:/[^\s]+$}) 
+}
 
 CONFIG = File.exist?('config.conf') ? ParseConfig.new('config.conf') : {}
 extruct = CONFIG.dig(:extruct, :command)

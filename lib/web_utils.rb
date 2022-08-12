@@ -18,13 +18,13 @@ module HarvesterTools
         warn "final URL #{response.request.url}"
         warn "Response code #{response.code}"
         if response.code == 203 
-          meta.warnings << ["002", url, headers]
+          meta.add_warning(["002", url, headers])
           meta.comments << "WARN: Response is non-authoritative (HTTP response code: #{response.code}).  Headers may have been manipulated encountered when trying to resolve #{url}\n"
         end
         response
       rescue RestClient::ExceptionWithResponse => e
-        warn "EXCEPTION WITH RESPONSE! #{e.response}\n#{e.response.headers}"
-        meta.warnings << ["003", url, headers] 
+        warn "EXCEPTION WITH RESPONSE! #{e.response.code} with response #{e.response}\nfailed response headers: #{e.response.headers}"
+        meta.add_warning(["003", url, headers])
         meta.comments << "WARN: HTTP error #{e} encountered when trying to resolve #{url}\n"
         if (e.response.code == 500 or e.response.code == 404)
           return false
@@ -34,13 +34,13 @@ module HarvesterTools
         # now we are returning the headers and body that were returned
       rescue RestClient::Exception => e
         warn "EXCEPTION WITH NO RESPONSE! #{e}"
-        meta.warnings << ["003", url, headers]
+        meta.add_warning(["003", url, headers])
         meta.comments << "WARN: HTTP error #{e} encountered when trying to resolve #{url}\n"
         false
         # now we are returning 'False', and we will check that with an \"if\" statement in our main code
       rescue Exception => e
         warn "EXCEPTION UNKNOWN! #{e}"
-        meta.warnings << ["003", url, headers]
+        meta.add_warning(["003", url, headers])
         meta.comments << "WARN: HTTP error #{e} encountered when trying to resolve #{url}\n"
         false
         # now we are returning 'False', and we will check that with an \"if\" statement in our main code

@@ -5,7 +5,7 @@ module HarvesterTools
   end
 
   class MetadataHarvester
-    def self.extract_metadata(links: [], metadata: HarvesterTools::MetadataObject.new)
+    def self.extract_metadata_from_links(links: [], metadata: HarvesterTools::MetadataObject.new)
       @meta = metadata
       @meta.comments << 'INFO:  now collecting both linked data and hash-style data using the harvested links'
 
@@ -26,23 +26,42 @@ module HarvesterTools
           next
         end
 
-        # process according to detected type
-        case abbreviation
-        when 'html'
-          @meta.comments << 'INFO: Processing html'
-          hvst.process_html(body: response.body, uri: link, metadata: @meta)
-        when 'xml'
-          @meta.comments << 'INFO: Processing xml'
-          hvst.process_xml(body: response.body, metadata: @meta)
-        when 'json'
-          @meta.comments << 'INFO: Processing json'
-          hvst.process_json(body: response.body, metadata: @meta)
-        when 'jsonld', 'rdfxml', 'turtle', 'ntriples', 'nquads'
-          @meta.comments << 'INFO: Processing linked data'
-          hvst.process_ld(body: response.body, content_type: content_type, metadata: @meta)
-        when 'specialist'
-          warn 'no specialized parsers so far'
-        end
+        process_according_to_type(body: response.body, uri: link, metadata: @meta, abbreviation: abbreviation,
+                                  content_type: content_type, harvester: hvst)
+      end
+    end
+
+    def self.extract_metadata_from_body(response:, metadata: HarvesterTools::MetadataObject.new)
+      @meta = metadata
+      @meta.comments << 'INFO:  now collecting both linked data and hash-style data using the harvested links'
+
+      abbreviation, content_type = attempt_to_detect_type(body: response.body, headers: response.headers)
+      unless abbreviation
+        @meta.add_warning(['017', response.request.url, ''])
+        @meta.comments << "WARN: metadata format returned from #{response.request.url} is not recognized. Moving on.\n"
+        return
+      end
+      process_according_to_type(body: response.body, uri: response.request.url, metadata: @meta,
+                                abbreviation: abbreviation, content_type: content_type)
+    end
+
+    def self.process_according_to_type(body:, uri:, abbreviation:, content_type:, metadata:,
+                                   harvester: HarvesterTools::MetadataParser.new(metadata_object: @meta))
+      case abbreviation
+      when 'html'
+        @meta.comments << 'INFO: Processing html'
+        harvester.process_html(body: body, uri: uri, metadata: @meta)
+      when 'xml'
+        @meta.comments << 'INFO: Processing xml'
+        harvester.process_xml(body: body, metadata: @meta)
+      when 'json'
+        @meta.comments << 'INFO: Processing json'
+        harvester.process_json(body: body, metadata: @meta)
+      when 'jsonld', 'rdfxml', 'turtle', 'ntriples', 'nquads'
+        @meta.comments << 'INFO: Processing linked data'
+        harvester.process_ld(body: body, content_type: content_type, metadata: @meta)
+      when 'specialist'
+        warn 'no specialized parsers so far'
       end
     end
 
@@ -111,24 +130,23 @@ module HarvesterTools
       [abbreviation, contenttype]
     end
 
-    def self.ntriples_hack(body:)  # distriller cannot recognize single-line ntriples unless they end with a period, which is not required by the spec... so hack it!
+    def self.ntriples_hack(body:) # distriller cannot recognize single-line ntriples unless they end with a period, which is not required by the spec... so hack it!
       detected_type = nil
       body.split.each do |line|
         line.strip!
         next if line.empty?
-        if line =~ %r{\s*<[^>]+>\s*<[^>]+>\s\S+}
-          @meta.comments << "INFO: running ntriples hack on  #{line + " ."}\n"
-          detected_type = RDF::Format.for({ sample: "#{line} ." })  # adding a period allows detection of ntriples by distiller
-          break
-        end        
-      end
-      @meta.comments << "INFO: ntriples hack found: #{detected_type.to_s}\n"
-      if detected_type != RDF::NTriples::Format   # only return the hacky case
-        return nil
-      end
-      return detected_type
-    end
 
+        next unless line =~ /\s*<[^>]+>\s*<[^>]+>\s\S+/
+
+        @meta.comments << "INFO: running ntriples hack on  #{line + ' .'}\n"
+        detected_type = RDF::Format.for({ sample: "#{line} ." }) # adding a period allows detection of ntriples by distiller
+        break
+      end
+      @meta.comments << "INFO: ntriples hack found: #{detected_type}\n"
+      return nil if detected_type != RDF::NTriples::Format # only return the hacky case
+
+      detected_type
+    end
 
     def self.check_json(body:)
       abbreviation = nil

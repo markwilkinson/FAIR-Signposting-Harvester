@@ -10,7 +10,7 @@ module HarvesterTools
       type, url = convertToURL(guid: guid)
       links = Array.new
       if type
-        links = resolve_url(url: url)
+        links = resolve_url(url: url, metadata: @meta)
         @meta.links = @meta.links | links
       else
         @meta.add_warning(['006', guid, ''])
@@ -31,6 +31,8 @@ module HarvesterTools
           return 'uri', guid
         elsif k == 'doi' and regex.match(guid)
           return 'doi', "https://doi.org/#{guid}"
+        elsif k == 'ark' and regex.match(guid)
+          return 'ark', "https://n2t.net/#{guid}"
         end
       end
       [nil, nil]
@@ -43,7 +45,8 @@ module HarvesterTools
       false
     end
 
-    def self.resolve_url(url:, method: :get, nolinkheaders: false, header: ACCEPT_STAR_HEADER)
+    def self.resolve_url(url:, method: :get, nolinkheaders: false, metadata:, header: ACCEPT_STAR_HEADER)
+      @meta = metadata
       @meta.guidtype = 'uri' if @meta.guidtype.nil?
       warn "\n\n FETCHING #{url} #{header}\n\n"
       response = HarvesterTools::WebUtils.fspfetch(url: url, headers: header, method: method, meta: @meta)
@@ -58,17 +61,17 @@ module HarvesterTools
       @meta.comments << "INFO: following redirection using this header led to the following URL: #{@meta.all_uris.last}.  Using the output from this URL for the next few tests..."
       @meta.full_response << response.body
 
-      links = process_link_headers(response: response) unless nolinkheaders
+      links = process_link_headers(response: response, metadata: @meta) unless nolinkheaders
       links
     end
 
-    def self.process_link_headers(response:)
+    def self.process_link_headers(response:, metadata:)
       warn "\n\n parsing #{response.headers}\n\n"
-
-      parser = LinkHeaders::Processor.new(default_anchor: @meta.all_uris.last)
+      
+      parser = LinkHeaders::Processor.new(default_anchor: metadata.all_uris.last)
       parser.extract_and_parse(response: response)
       factory = parser.factory # LinkHeaders::LinkFactory
-      FspHarvester::Utils.signpostingcheck(factory: factory, metadata: @meta)
+      FspHarvester::Utils.signpostingcheck(factory: factory, metadata: metadata)
       factory.all_links
     end
   end
