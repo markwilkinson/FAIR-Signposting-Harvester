@@ -26,4 +26,10 @@ RSpec.describe FspHarvester do
     warnings = extract_warning_ids(warnings: meta.warnings)
     expect(warnings.include? '003').to be true
   end
+
+  it 'should have a metadata object that has a date' do
+    guid = '10.5061/dryad.6tb1702'
+    _links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
+    expect(metadata.date == nil).to be false 
+  end
 end

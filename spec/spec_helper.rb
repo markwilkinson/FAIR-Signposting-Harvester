@@ -2,6 +2,8 @@
 
 require_relative '../lib/harvester'
 
+ENV['EXTRUCT_COMMAND'] = 'extruct'
+ENV['RDF_COMMAND'] = 'rdf'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
