@@ -4,8 +4,8 @@ module HarvesterTools
 
   class Utils
 
-    def self.resolve_guid(guid:)
-      @meta = HarvesterTools::MetadataObject.new
+    def self.resolve_guid(guid:, metadata: HarvesterTools::MetadataObject.new)
+      @meta = metadata
       @meta.all_uris = [guid]
       type, url = convertToURL(guid: guid)
       links = Array.new

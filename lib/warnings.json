@@ -115,5 +115,12 @@
                   {"Documentation": "http://dx.doi.org/10.17487/RFC8259"},
                   {"Validator": "https://jsononline.net/json-validator"}],
       "severity": "WARN"
+   },
+   "600": {
+      "message": "Data identifier cannot be unambiguously determined, therefore cannot be tested against known persistent identifier schemas",
+      "linkout": [],
+      "severity": "FAILURE"
    }
+
+
 }

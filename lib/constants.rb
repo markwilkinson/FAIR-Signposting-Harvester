@@ -78,31 +78,31 @@ GUID_TYPES = {
   'ark' => Regexp.new(%r{^ark:/[^\s]+$}) 
 }
 
-CONFIG = File.exist?('config.conf') ? ParseConfig.new('config.conf') : {}
-extruct = CONFIG.dig(:extruct, :command)
-extruct ||= 'extruct'
+# CONFIG = File.exist?('config.conf') ? ParseConfig.new('config.conf') : {}
+# extruct = CONFIG.dig(:extruct, :command)
+extruct = ENV['EXTRUCT_COMMAND'] || 'extruct'
 extruct.strip!
 case extruct
 when /[&|;`$\s]/
-  abort 'The Extruct command in the config file appears to be subject to command injection.  I will not continue'
+  abort 'The Extruct command appears to be subject to command injection.  I will not continue'
 when /echo/i
-  abort 'The Extruct command in the config file appears to be subject to command injection.  I will not continue'
+  abort 'The Extruct command appears to be subject to command injection.  I will not continue'
 end
 EXTRUCT_COMMAND = extruct
 
-rdf_command = CONFIG.dig(:rdf, :command)
-rdf_command ||= 'rdf'
+# rdf_command = CONFIG.dig(:rdf, :command)
+rdf_command = ENV['RDF_COMMAND'] || 'rdf'
 rdf_command.strip
 case rdf_command
 when /[&|;`$\s]/
-  abort 'The RDF command in the config file appears to be subject to command injection.  I will not continue'
+  abort 'The RDF command appears to be subject to command injection.  I will not continue'
 when /echo/i
-  abort 'The RDF command in the config file appears to be subject to command injection.  I will not continue'
+  abort 'The RDF command appears to be subject to command injection.  I will not continue'
 when !(/rdf$/ =~ $_)
   abort "this software requires that Kelloggs Distiller tool is used. The distiller command must end in 'rdf'"
 end
 RDF_COMMAND = rdf_command
 
-tika_command = CONFIG.dig(:tika, :command)
-tika_command ||= 'http://localhost:9998/meta'
+# tika_command = CONFIG.dig(:tika, :command)
+tika_command = ENV['TIKA_COMMAND'] || 'http://localhost:9998/meta'
 TIKA_COMMAND = tika_command
