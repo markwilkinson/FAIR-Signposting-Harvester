@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-#require_relative 'fsp_harvester/version'
+require_relative './fsp_harvester/version'
 require 'json/ld'
 require 'json/ld/preloaded'
 require 'json'
