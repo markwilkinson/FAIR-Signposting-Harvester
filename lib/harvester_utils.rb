@@ -11,7 +11,7 @@ module HarvesterTools
       links = Array.new
       if type
         links = resolve_url(url: url, metadata: @meta)
-        @meta.links = @meta.links | links
+        @meta.links = @meta.links.append(*links)
       else
         @meta.add_warning(['006', guid, ''])
         @meta.comments << "FATAL: GUID type not recognized.\n"

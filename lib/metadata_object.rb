@@ -1,16 +1,18 @@
 module HarvesterTools
   class MetadataObject
-    attr_accessor :hash, :graph, :comments, :links, :warnings, :guidtype, :full_response, :all_uris, :guid, :score, :version, :date  # a hash of metadata # a RDF.rb graph of metadata  # an array of comments  # the type of GUID that was detected # will be an array of Net::HTTP::Response
+    attr_accessor :id, :hash, :graph, :comments, :links, :warnings, :guidtype, :full_response, :all_uris, :tested_guid, :score, :version, :date  # a hash of metadata # a RDF.rb graph of metadata  # an array of comments  # the type of GUID that was detected # will be an array of Net::HTTP::Response
 
-    def initialize() # get a name from the "new" call, or set a default
+    def initialize(id: "unidentified_metadata") # get a name from the "new" call, or set a default
+      @id = id
       @hash = {}
       @graph = RDF::Graph.new
       @comments =  []
       @warnings =  []
       @full_response = []
       @links = []
+      @guidtype = ""
       @all_uris = []
-      @guid = ""
+      @tested_guid = ""
       @score = 0
       @version = '0.0'
       @date = Time.now.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
