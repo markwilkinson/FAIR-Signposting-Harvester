@@ -1,4 +1,6 @@
-ACCEPT_ALL_HEADER = { 'Accept' => 'text/turtle, application/ld+json, application/rdf+xml, text/xhtml+xml, application/n3, application/rdf+n3, application/turtle, application/x-turtle, text/n3, text/turtle, text/rdf+n3, text/rdf+turtle, application/n-triples' }
+module FspHarvester
+
+ACCEPT_LD_HEADER = { 'Accept' => 'text/turtle, application/ld+json, application/rdf+xml, text/xhtml+xml, application/n3, application/rdf+n3, application/turtle, application/x-turtle, text/n3, text/turtle, text/rdf+n3, text/rdf+turtle, application/n-triples' }
 
 ACCEPT_STAR_HEADER = {'Accept' => '*/*'}
 
@@ -77,6 +79,7 @@ GUID_TYPES = {
   'uri' => Regexp.new(%r{^\w+:/?/?[^\s]+$}),
   'ark' => Regexp.new(%r{^ark:/[^\s]+$}) 
 }
+end
 
 # CONFIG = File.exist?('config.conf') ? ParseConfig.new('config.conf') : {}
 # extruct = CONFIG.dig(:extruct, :command)
@@ -88,7 +91,7 @@ when /[&|;`$\s]/
 when /echo/i
   abort 'The Extruct command appears to be subject to command injection.  I will not continue'
 end
-EXTRUCT_COMMAND = extruct
+FspHarvester::EXTRUCT_COMMAND = extruct
 
 # rdf_command = CONFIG.dig(:rdf, :command)
 rdf_command = ENV['RDF_COMMAND'] || 'rdf'
@@ -101,8 +104,8 @@ when /echo/i
 when !(/rdf$/ =~ $_)
   abort "this software requires that Kelloggs Distiller tool is used. The distiller command must end in 'rdf'"
 end
-RDF_COMMAND = rdf_command
+FspHarvester::RDF_COMMAND = rdf_command
 
 # tika_command = CONFIG.dig(:tika, :command)
 tika_command = ENV['TIKA_COMMAND'] || 'http://localhost:9998/meta'
-TIKA_COMMAND = tika_command
+FspHarvester::TIKA_COMMAND = tika_command

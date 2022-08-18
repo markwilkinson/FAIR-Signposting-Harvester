@@ -20,7 +20,7 @@ module HarvesterTools
     end
 
     def self.convertToURL(guid:)
-      GUID_TYPES.each do |k, regex|
+      FspHarvester::GUID_TYPES.each do |k, regex|
         if k == 'inchi' and regex.match(guid)
           return 'inchi', "https://pubchem.ncbi.nlm.nih.gov/rest/rdf/inchikey/#{guid}"
         elsif k == 'handle1' and regex.match(guid)
@@ -39,13 +39,13 @@ module HarvesterTools
     end
 
     def self.typeit(guid:)
-      GUID_TYPES.each do |type, regex|
+      FspHarvester::GUID_TYPES.each do |type, regex|
         return type if regex.match(guid)
       end
       false
     end
 
-    def self.resolve_url(url:, method: :get, nolinkheaders: false, metadata:, header: ACCEPT_STAR_HEADER)
+    def self.resolve_url(url:, method: :get, nolinkheaders: false, metadata:, header: FspHarvester::ACCEPT_STAR_HEADER)
       @meta = metadata
       @meta.guidtype = 'uri' if @meta.guidtype.nil?
       warn "\n\n FETCHING #{url} #{header}\n\n"

@@ -116,6 +116,18 @@
                   {"Validator": "https://jsononline.net/json-validator"}],
       "severity": "WARN"
    },
+   "022": {
+      "message": "Mismatch between the Content-type header and the content of the returned document.",
+      "linkout": [],
+      "severity": "WARN"
+   },
+   "023": {
+      "message": "Returned content-type is not compatible with any requested content-type, yet a HTTP 406 error was not returned",
+      "linkout": [],
+      "severity": "WARN"
+   },
+
+
    "600": {
       "message": "Data identifier cannot be unambiguously determined, therefore cannot be tested against known persistent identifier schemas",
       "linkout": [],

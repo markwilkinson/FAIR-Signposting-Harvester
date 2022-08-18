@@ -13,7 +13,7 @@ module HarvesterTools
 
       hvst = HarvesterTools::MetadataParser.new(metadata_object: @meta) # put here because the class variable for detecting duplicates should apply to all URIs
       describedby.each do |link|
-        accepttype = ACCEPT_STAR_HEADER
+        accepttype = FspHarvester::ACCEPT_STAR_HEADER
         accept = link.respond_to?('type') ? link.type : nil
         accepttype = { 'Accept' => accept } if accept
 
@@ -38,8 +38,13 @@ module HarvesterTools
       abbreviation, content_type = attempt_to_detect_type(body: response.body, headers: response.headers)
       unless abbreviation
         @meta.add_warning(['017', response.request.url, ''])
-        @meta.comments << "WARN: metadata format returned from #{response.request.url} is not recognized. Moving on.\n"
+        @meta.comments << "WARN: format returned from #{response.request.url} is not recognized. Moving on.\n"
         return
+      end
+      request_content_types = response.request.headers["Accept"].split(/,\s*/)
+      unless (request_content_types.include? content_type) and !(request_content_types.include? "*/*") and (response.code != 406)
+        @meta.add_warning(['023', response.request.url, ''])
+        @meta.comments << "WARN: format returned from #{response.request.url} does not match request type.  This should result in a 406 error, but instead was accepted as a 200.\n"
       end
       process_according_to_type(body: response.body, uri: response.request.url, metadata: @meta,
                                 abbreviation: abbreviation, content_type: content_type)
@@ -65,7 +70,7 @@ module HarvesterTools
       end
     end
 
-    def self.attempt_to_resolve(link:, headers: ACCEPT_STAR_HEADER)
+    def self.attempt_to_resolve(link:, headers: FspHarvester::ACCEPT_STAR_HEADER)
       @meta.comments << "INFO:  link #{link.href} being processed"
       if link.respond_to? 'type'
         header = { 'Accept' => link.type }
@@ -87,22 +92,33 @@ module HarvesterTools
       content_type = nil
       @meta.comments << 'INFO: Testing metadata format for html, xml, and linked data formats\n'
       if body =~ /^\s*<\?xml/
-        if body =~ /<HTML/i
+        if body[0..1000] =~ /<HTML/i  # take a sample, it should appear quite early (it will appear in other places in e.g. tutorial documents)
           abbreviation = 'html'
-          content_type = 'text/html'
+          content_type = validate_claimed_type(abbreviation: abbreviation, claimed_type: headers[:content_type])
+          @meta.add_warning(['022', @meta.all_uris.last, "" ]) unless content_type
+          content_type |= 'text/html'
           @meta.comments << 'INFO: appears to be HTML\n'
         elsif body =~ /<rdf:RDF/i
           abbreviation = 'rdfxml'
-          content_type = 'application/rdf+xml'
+          content_type = validate_claimed_type(abbreviation: abbreviation, claimed_type: headers[:content_type])
+          @meta.add_warning(['022', @meta.all_uris.last, "" ]) unless content_type
+          content_type |= 'application/rdf+xml'
           @meta.comments << 'INFO: appears to be RDF-XML\n'
         else
           abbreviation = 'xml'
-          content_type = 'application/xml'
+          content_type = validate_claimed_type(abbreviation: abbreviation, claimed_type: headers[:content_type])
+          @meta.add_warning(['022', @meta.all_uris.last, "" ]) unless content_type
+          content_type |= 'application/xml'
           @meta.comments << 'INFO: appears to be XML\n'
         end
+      elsif body[0..1000] =~ /<HTML/i # take a sample, it should appear quite early (it will appear in other places in e.g. tutorial documents)
+        content_type = validate_claimed_type(abbreviation: abbreviation, claimed_type: headers[:content_type])
+        @meta.add_warning(['022', @meta.all_uris.last, "" ]) unless content_type
+        content_type |= 'text/html'
+        @meta.comments << 'INFO: appears to be HTML\n'
       else
         abbreviation, content_type = check_ld(body: body, claimed_type: headers[:content_type])
-        abbreviation, content_type = check_json(body: body) unless abbreviation
+        abbreviation, content_type = check_json(body: body) unless abbreviation  # don't test if LD already found!
       end
 
       unless content_type
@@ -112,18 +128,44 @@ module HarvesterTools
       [abbreviation, content_type]
     end
 
+    def self.validate_claimed_type(abbreviation:, claimed_type:)
+      
+        case abbreviation
+        when 'html'
+          return claimed_type if FspHarvester::HTML_FORMATS['html'].include? claimed_type
+        when 'xml'
+          return claimed_type if FspHarvester::XML_FORMATS['xml'].include? claimed_type
+        when 'json'
+          return claimed_type if FspHarvester::JSON_FORMATS['json'].include? claimed_type
+        when 'jsonld', 'rdfxml', 'turtle', 'ntriples', 'nquads'
+          return claimed_type if FspHarvester::RDF_FORMATS.values.flatten.include? claimed_type
+        when 'specialist'
+          warn 'no specialized parsers so far'
+        end
+        return false
+    end
+
     def self.check_ld(body:, claimed_type:)
       detected_type = ntriples_hack(body: body) # ntriples hack for one-line metadata records
-      unless detected_type
+      unless detected_type  # see if distiller can detect a type
         detected_type = RDF::Format.for({ sample: body[0..5000] })
         @meta.comments << "INFO: Auto-detected type #{detected_type}\n"
       end
+      # at this point, detected_type is something like RDF::Turtle::Format (or nil).  This will return a content-type
       contenttype = ''
       abbreviation = ''
       if detected_type
-        contenttype = detected_type.content_type.first # comes back as array
-        abbreviation = abbreviate_type(contenttype: contenttype)
-        @meta.comments << "INFO: using content-type #{contenttype}.\n"
+        detectedcontenttypes = detected_type.content_type # comes back as array of [application/x, application/y]
+        unless detectedcontenttypes.include? claimed_type
+          @meta.add_warning(['022', @meta.all_uris.last, "" ]) 
+          contenttype = detected_type.content_type.first  # just pick one arbitrarily, since it doesn't match thedeclared type anyway
+          abbreviation = abbreviate_type(contenttype: contenttype)
+          @meta.comments << "INFO: using content-type #{contenttype} even though there was a mismatch.\n"
+        else
+          contenttype = claimed_type  # just pick one arbitrarily, since it doesn't match thedeclared type anyway
+          abbreviation = abbreviate_type(contenttype: contenttype)
+          @meta.comments << "INFO: using content-type #{contenttype}.\n"
+        end
       else
         @meta.comments << "INFO: metadata does not appear to be in a linked data format.  Trying other options.\n"
       end
@@ -161,13 +203,14 @@ module HarvesterTools
         abbreviation = 'json'
       else
         @meta.comments << "INFO: metadata does not appear to be in JSON format.  No options left.\n"
+        return [nil, nil]
       end
-      [abbreviation, 'application/ld+json']
+      [abbreviation, 'application/json']
     end
 
     def self.abbreviate_type(contenttype:)
       foundtype = nil
-      RDF_FORMATS.merge(XML_FORMATS).merge(HTML_FORMATS).merge(JSON_FORMATS).each do |type, vals|
+      FspHarvester::RDF_FORMATS.merge(FspHarvester::XML_FORMATS).merge(FspHarvester::HTML_FORMATS).merge(FspHarvester::JSON_FORMATS).each do |type, vals|
         warn "\n\ntype #{type}\nvals #{vals}\n\n"
         @meta.comments << "INFO: testing #{type} MIME types for #{contenttype}"
         next unless vals.include? contenttype

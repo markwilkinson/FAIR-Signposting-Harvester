@@ -6,20 +6,20 @@ module HarvesterTools
     def self.begin_brute_force(guid:, metadata: HarvesterTools::MetadataObject.new)
       type, url = HarvesterTools::Utils.convertToURL(guid: guid)
       return false unless type
-
+      # TODO:  follow rel=alternate headers, if they are in LD or Hash format
       do_content_negotiation(url: url, metadata: metadata)
       metadata
     end
 
     def self.do_content_negotiation(url:, metadata:)
-      response = resolve_url_brute(url: url, metadata: metadata, headers: ACCEPT_ALL_HEADER)
+      response = resolve_url_brute(url: url, metadata: metadata, headers: FspHarvester::ACCEPT_LD_HEADER)
       if response
         HarvesterTools::MetadataHarvester.extract_metadata_from_body(response: response, metadata: metadata)
       end
-      response = resolve_url_brute(url: url, metadata: metadata, headers: ACCEPT_STAR_HEADER)
+      response = resolve_url_brute(url: url, metadata: metadata, headers: FspHarvester::ACCEPT_STAR_HEADER)
       if response
         HarvesterTools::MetadataHarvester.extract_metadata_from_body(response: response, metadata: metadata) # extract from landing page
-        response = resolve_url_brute(url: response.request.url, metadata: metadata, headers: ACCEPT_ALL_HEADER) # now do content negotiation on the landing page
+        response = resolve_url_brute(url: response.request.url, metadata: metadata, headers: FspHarvester::ACCEPT_LD_HEADER) # now do content negotiation on the landing page
         if response
           HarvesterTools::MetadataHarvester.extract_metadata_from_body(response: response, metadata: metadata) # extract from landing page
         end
@@ -29,7 +29,7 @@ module HarvesterTools
     def self.resolve_url_brute(url:, method: :get, nolinkheaders: true, headers:, metadata:)
       @meta = metadata
       @meta.guidtype = 'uri' if @meta.guidtype.nil?
-      warn "\n\n BRUTE FETCHING #{url} #{headers}\n\n"
+      warn "\n\n BRUTE FETCHING #{url} \nwith headers\n #{headers}\n\n"
       response = HarvesterTools::WebUtils.fspfetch(url: url, headers: headers, method: method, meta: @meta)
       warn "\n\n head #{response.headers.inspect}\n\n" if response
 

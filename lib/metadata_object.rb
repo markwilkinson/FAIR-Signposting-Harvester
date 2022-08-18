@@ -2,7 +2,7 @@ module HarvesterTools
   class MetadataObject
     attr_accessor :id, :hash, :graph, :comments, :links, :warnings, :guidtype, :full_response, :all_uris, :tested_guid, :score, :version, :date  # a hash of metadata # a RDF.rb graph of metadata  # an array of comments  # the type of GUID that was detected # will be an array of Net::HTTP::Response
 
-    def initialize(id: "unidentified_metadata") # get a name from the "new" call, or set a default
+    def initialize(id: "urn:local:unidentified_metadata") # get a name from the "new" call, or set a default
       @id = id
       @hash = {}
       @graph = RDF::Graph.new
