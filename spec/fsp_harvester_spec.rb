@@ -20,7 +20,7 @@ RSpec.describe FspHarvester do
     guid = '10.5061/dryad.6tb1702'
     _links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
     meta = HarvesterTools::BruteForce.begin_brute_force(guid: guid, metadata: metadata)
-    expect(meta.graph.size).to eq 55
+    expect(meta.graph.size).to eq 146
     expect(meta.hash.size).to eq 0
     expect(meta.links.length).to eq 9
     warnings = extract_warning_ids(warnings: meta.warnings)
@@ -37,6 +37,21 @@ RSpec.describe FspHarvester do
     guid = '10.5061/dryad.6tb1702'
     _links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
     expect(FspHarvester::RDF_COMMAND == nil).to be false
+  end
+
+  it 'it should find no conflict between content-type and what is returned' do
+    guid = 'https://go-fair.org'
+    links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
+    meta = HarvesterTools::BruteForce.begin_brute_force(guid: guid, metadata: metadata, links: links )
+    warnings = extract_warning_ids(warnings: meta.warnings)
+    expect(warnings.include? '022').to be true
+  end
+  it 'should find a conflict between the accept headers and what is returned, so throw a 023 error' do
+    guid = 'https://go-fair.org'
+    links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
+    meta = HarvesterTools::BruteForce.begin_brute_force(guid: guid, metadata: metadata, links: links)
+    warnings = extract_warning_ids(warnings: meta.warnings)
+    expect(warnings.include? '023').to be true
   end
 
 end

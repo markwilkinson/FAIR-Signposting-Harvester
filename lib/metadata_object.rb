@@ -1,6 +1,6 @@
 module HarvesterTools
   class MetadataObject
-    attr_accessor :id, :hash, :graph, :comments, :links, :warnings, :guidtype, :full_response, :all_uris, :tested_guid, :score, :version, :date  # a hash of metadata # a RDF.rb graph of metadata  # an array of comments  # the type of GUID that was detected # will be an array of Net::HTTP::Response
+    attr_accessor :id, :hash, :graph, :comments, :links, :warnings, :guidtype, :full_response, :all_uris, :tested_guid, :score, :version, :date, :url_header_hash  # a hash of metadata # a RDF.rb graph of metadata  # an array of comments  # the type of GUID that was detected # will be an array of Net::HTTP::Response
 
     def initialize(id: "urn:local:unidentified_metadata") # get a name from the "new" call, or set a default
       @id = id
@@ -16,6 +16,7 @@ module HarvesterTools
       @score = 0
       @version = '0.0'
       @date = Time.now.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
+      @url_header_hash = Hash.new(false) # the combinarion of URL and the accept headers, sha1 hashed, for quick lookup if it has already been processed
       w = RestClient.get("https://raw.githubusercontent.com/markwilkinson/FAIR-Signposting-Harvester/master/lib/warnings.json")
       #@warn = File.read("./lib/warnings.json")
       @warn = JSON.parse(w)
@@ -37,6 +38,7 @@ module HarvesterTools
 
     def add_warning(warning)
       id = warning[0]
+      return unless @warn[id]   # if there's a mismatch between code and the warnings in github
       url = warning[1]
       headers = warning[2]
       message = @warn[id]['message']

@@ -59,7 +59,7 @@ module HarvesterTools
       end
 
       @meta.comments << "INFO: following redirection using this header led to the following URL: #{@meta.all_uris.last}.  Using the output from this URL for the next few tests..."
-      @meta.full_response << response.body
+      @meta.full_response << [url, response.body]
 
       links = process_link_headers(response: response, metadata: @meta) unless nolinkheaders
       links

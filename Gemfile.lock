@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fsp_harvester (0.1.21)
+    fsp_harvester (0.1.22)
       json (~> 2.0)
       linkeddata (~> 3.2)
       linkheaders-processor (~> 0.1.18)

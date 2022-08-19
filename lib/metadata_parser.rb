@@ -13,17 +13,16 @@ module HarvesterTools
       @meta = metadata_object
     end
 
-    def process_html(body:, uri:, metadata:)
-      @meta = metadata
+    def process_html(body:, uri:, metadata: @meta)
       tools = HarvesterTools::ExternalTools.new(metadata: @meta)
-      result = tools.process_with_distiller(body: body)
+      tools.process_with_distiller(body: body, metadata: @meta) # adds to @meta
 
-      jsonld, microdata, microformat, opengraph, rdfa = tools.process_with_extruct(uri: uri)
-      parse_rdf(body: jsonld, content_type: 'application/ld+json')
+      jsonld, microdata, microformat, opengraph, rdfa = tools.process_with_extruct(uri: uri, metadata: @meta)
+      parse_rdf(body: jsonld, content_type: 'application/ld+json', metadata: metadata)
       @meta.merge_hash(microdata)
       @meta.merge_hash(microformat) 
       @meta.merge_hash(opengraph) 
-      parse_rdf(body: rdfa, content_type: 'application/ld+json')
+      parse_rdf(body: rdfa, content_type: 'application/ld+json', metadata: @meta)
     end
 
     def process_xml(body:, metadata:)
@@ -89,7 +88,7 @@ module HarvesterTools
         @meta.comments << "INFO: The response message body component appears to contain #{rdfformat}.\n"
         reader = ''
         begin
-          reader = rdfformat.reader.new(body)
+          reader = rdfformat.reader.new(body.force_encoding('UTF-8'))
         rescue Exception => e
           @meta.comments << "WARN: Though linked data was found, it failed to parse (Exception #{e}).  This likely indicates some syntax error in the data.  As a result, no metadata will be extracted from this message.\n"
           @meta.add_warning(['018', '', ''])
@@ -103,9 +102,9 @@ module HarvesterTools
           end
           reader = rdfformat.reader.new(body) # have to re-read it here, but now its safe because we have already caught errors
           warn 'WRITING TO CACHE'
-          HarvesterTools::Cache.writeRDFCache(reader: reader, body: body) # write to the special RDF graph cache
+          HarvesterTools::Cache.writeRDFCache(reader: reader, body: body.force_encoding('UTF-8')) # write to the special RDF graph cache
           warn 'WRITING DONE'
-          reader = rdfformat.reader.new(body)  # frustrating that we cannot rewind!
+          reader = rdfformat.reader.new(body.force_encoding('UTF-8'))  # frustrating that we cannot rewind!
           warn 'RE-READING DONE'
           @meta.merge_rdf(reader.to_a)
           warn 'MERGE DONE'
@@ -115,7 +114,7 @@ module HarvesterTools
           @meta.add_warning(['018', '', ''])
         rescue Exception => e
           meta.comments << "CRITICAL: An unknown error occurred while parsing the (apparent) Linked Data (sample of what was parsed:  #{body[0..300].delete("\n")}).  Moving on...\n"
-          warn "\n\nCRITICAL: #{e.inspect} An unknown error occurred while parsing the (apparent) Linked Data (full body:  #{body}).  Moving on...\n"
+          warn "\n\nCRITICAL: #{e.inspect} An unknown error occurred while parsing the (apparent) Linked Data (full body:  #{body.force_encoding('UTF-8')}).  Moving on...\n"
           @meta.add_warning(['018', '', ''])
         end
       end

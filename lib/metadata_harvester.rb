@@ -91,33 +91,36 @@ module HarvesterTools
       abbreviation = nil
       content_type = nil
       @meta.comments << 'INFO: Testing metadata format for html, xml, and linked data formats\n'
+      claimed_type = headers[:content_type]
+      claimed_type.gsub!(/\s*;.*/, '')
       if body =~ /^\s*<\?xml/
         if body[0..1000] =~ /<HTML/i  # take a sample, it should appear quite early (it will appear in other places in e.g. tutorial documents)
           abbreviation = 'html'
-          content_type = validate_claimed_type(abbreviation: abbreviation, claimed_type: headers[:content_type])
+          content_type = validate_claimed_type(abbreviation: abbreviation, claimed_type: claimed_type)
           @meta.add_warning(['022', @meta.all_uris.last, "" ]) unless content_type
           content_type |= 'text/html'
           @meta.comments << 'INFO: appears to be HTML\n'
         elsif body =~ /<rdf:RDF/i
           abbreviation = 'rdfxml'
-          content_type = validate_claimed_type(abbreviation: abbreviation, claimed_type: headers[:content_type])
+          content_type = validate_claimed_type(abbreviation: abbreviation, claimed_type: claimed_type)
           @meta.add_warning(['022', @meta.all_uris.last, "" ]) unless content_type
           content_type |= 'application/rdf+xml'
           @meta.comments << 'INFO: appears to be RDF-XML\n'
         else
           abbreviation = 'xml'
-          content_type = validate_claimed_type(abbreviation: abbreviation, claimed_type: headers[:content_type])
+          content_type = validate_claimed_type(abbreviation: abbreviation, claimed_type: claimed_type)
           @meta.add_warning(['022', @meta.all_uris.last, "" ]) unless content_type
           content_type |= 'application/xml'
           @meta.comments << 'INFO: appears to be XML\n'
         end
       elsif body[0..1000] =~ /<HTML/i # take a sample, it should appear quite early (it will appear in other places in e.g. tutorial documents)
-        content_type = validate_claimed_type(abbreviation: abbreviation, claimed_type: headers[:content_type])
+        abbreviation = 'html'
+        content_type = validate_claimed_type(abbreviation: abbreviation, claimed_type: claimed_type)
         @meta.add_warning(['022', @meta.all_uris.last, "" ]) unless content_type
-        content_type |= 'text/html'
+        content_type ||= 'text/html'
         @meta.comments << 'INFO: appears to be HTML\n'
       else
-        abbreviation, content_type = check_ld(body: body, claimed_type: headers[:content_type])
+        abbreviation, content_type = check_ld(body: body, claimed_type: claimed_type)
         abbreviation, content_type = check_json(body: body) unless abbreviation  # don't test if LD already found!
       end
 
@@ -129,7 +132,9 @@ module HarvesterTools
     end
 
     def self.validate_claimed_type(abbreviation:, claimed_type:)
-      
+        warn "\n\nclaimed type #{claimed_type}\nabbreviation #{abbreviation}\n\n"
+        claimed_type.gsub!(/\s*;.*/, '')
+
         case abbreviation
         when 'html'
           return claimed_type if FspHarvester::HTML_FORMATS['html'].include? claimed_type
@@ -148,7 +153,7 @@ module HarvesterTools
     def self.check_ld(body:, claimed_type:)
       detected_type = ntriples_hack(body: body) # ntriples hack for one-line metadata records
       unless detected_type  # see if distiller can detect a type
-        detected_type = RDF::Format.for({ sample: body[0..5000] })
+        detected_type = RDF::Format.for({ sample: body[0..5000].force_encoding('UTF-8')})
         @meta.comments << "INFO: Auto-detected type #{detected_type}\n"
       end
       # at this point, detected_type is something like RDF::Turtle::Format (or nil).  This will return a content-type
@@ -194,7 +199,7 @@ module HarvesterTools
       abbreviation = nil
       parsed = nil
       begin
-        parsed = JSON.parse(body)
+        parsed = JSON.parse(body.force_encoding('UTF-8'))
       rescue StandardError
         abbreviation = nil
       end
