@@ -39,19 +39,21 @@ RSpec.describe FspHarvester do
     expect(FspHarvester::RDF_COMMAND == nil).to be false
   end
 
-  it 'it should find no conflict between content-type and what is returned' do
+  it 'it should find no conflict between content-type and what is returned; should find a conflict between the accept headers and what is returned, so throw a 023 error' do
     guid = 'https://go-fair.org'
     links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
     meta = HarvesterTools::BruteForce.begin_brute_force(guid: guid, metadata: metadata, links: links )
     warnings = extract_warning_ids(warnings: meta.warnings)
-    expect(warnings.include? '022').to be true
-  end
-  it 'should find a conflict between the accept headers and what is returned, so throw a 023 error' do
-    guid = 'https://go-fair.org'
-    links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
-    meta = HarvesterTools::BruteForce.begin_brute_force(guid: guid, metadata: metadata, links: links)
-    warnings = extract_warning_ids(warnings: meta.warnings)
+    expect(warnings.include? '022').to be false
     expect(warnings.include? '023').to be true
   end
 
+  it 'should accept a DOI' do
+    guid = '10.5281/zenodo.3385997'
+    links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
+    HarvesterTools::BruteForce.begin_brute_force(guid: guid, metadata: metadata, links: links)
+    expect(metadata.graph.size > 1).to be true
+  end
+
 end
+#http://seek.cbgp.upm.es:9000/fsp-harvester-server/ld-by-old-workflow?guid=10.5281%2Fzenodo.3385997

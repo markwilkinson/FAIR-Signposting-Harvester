@@ -35,16 +35,17 @@ module HarvesterTools
 
     def self.process_alternates(links: [], metadata:)
       warn "\n\nINFO: entering content negotiation on link alternates\n\n"
-      metadata.comments << "IINFO: entering content negotiation on link alternates.\n"
+      metadata.comments << "INFO: entering content negotiation on link alternates.\n"
       # process "alternate" links
       links.each do |link|  
         next unless link.relation == "alternate"
+        next unless sanity_check_alternate(link: link, metadata: metadata)  # don't try to process zip files!  LOL!
 
         url = link.href
         headers = {'Accept' => "#{link.type}"} if link.respond_to?("type")
         headers ||= FspHarvester::ACCEPT_STAR_HEADER
         warn "\n\nINFO: resolving alternate #{url} with headers #{headers.to_s}\n\n"
-        metadata.comments << "IINFO: entering content negotiation on link alternates.\n"
+        metadata.comments << "INFO: entering content negotiation on link alternates.\n"
         response = resolve_url_brute(url: url, metadata: metadata, headers: headers) # now do content negotiation on the link
         if response
           HarvesterTools::MetadataHarvester.extract_metadata_from_body(response: response, metadata: metadata) # extract from alternate link
@@ -53,6 +54,28 @@ module HarvesterTools
 
     end
 
+    def self.sanity_check_alternate(link:, metadata:)
+      type = link.type if link.respond_to?('type')
+      href = link.href
+      unless type # we're gonna have to check extensions...
+        m = href.match(/.*\.[\w\-]+/)
+        extension = m[1]
+        unless %w[json jsonld rdf ttl turtle n3 triples ntriples txt html xhtml nq xml].include? extension
+          warn "\n\nINFO: extension #{extension} is not trusted as a link 'alternate' representation for metadata, so it will not be processed\n"
+          metadata.comments << "INFO: extension #{extension} is not trusted as a link 'alternate' representation for metadata, so it will not be processed.\n"
+          return false
+        end
+        return true
+      end
+      type.gsub!(/;.*/, '')  # remove any UTF8 blah blah
+      abbrev = HarvesterTools::MetadataHarvester.abbreviate_type(contenttype: type)
+      unless abbrev
+        warn "\n\nINFO: content-type #{type} is not trusted as a link 'alternate' representation for metadata, so it will not be processed\n"
+        metadata.comments << "INFO: content-type #{type} is not trusted as a link 'alternate' representation for metadata, so it will not be processed.\n"
+        return false
+      end
+      true
+    end
 
     def self.resolve_url_brute(url:, method: :get, nolinkheaders: true, headers:, metadata:)
 
