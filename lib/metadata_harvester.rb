@@ -161,7 +161,14 @@ module HarvesterTools
       abbreviation = ''
       if detected_type
         detectedcontenttypes = detected_type.content_type # comes back as array of [application/x, application/y]
-        unless detectedcontenttypes.include? claimed_type
+
+        case
+        when claimed_type =~ /application\/vnd\./  # vnd are domain specific
+          contenttype = claimed_type  # just pick one arbitrarily, since it doesn't match thedeclared type anyway
+          abbreviation = abbreviate_type(contenttype: contenttype)
+          @meta.comments << "INFO: using content-type #{contenttype}.\n"
+        when detectedcontenttypes.include?(claimed_type) 
+          warn "detected types #{detectedcontenttypes}  claimed type #{claimed_type}"
           @meta.add_warning(['022', @meta.all_uris.last, "" ]) 
           contenttype = detected_type.content_type.first  # just pick one arbitrarily, since it doesn't match thedeclared type anyway
           abbreviation = abbreviate_type(contenttype: contenttype)
