@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "example-gem", "~> 1.0"
   spec.add_dependency 'json', '~> 2.0'
   spec.add_dependency 'linkeddata', '~> 3.2'
-  spec.add_dependency 'linkheaders-processor', '~>0.1.18'
+  spec.add_dependency 'linkheaders-processor', '~>0.1.19'
   spec.add_dependency 'metainspector', '~>5.11.2'
   spec.add_dependency 'parseconfig', '~>1.1'
   spec.add_dependency 'rake', '~> 13.0'
