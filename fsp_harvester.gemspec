@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "example-gem", "~> 1.0"
   spec.add_dependency 'json', '~> 2.0'
   spec.add_dependency 'linkeddata', '~> 3.2'
+  spec.add_dependency 'rdf-raptor', '~> 3.2.0'
   spec.add_dependency 'linkheaders-processor', '~>0.1.19'
   spec.add_dependency 'metainspector', '~>5.11.2'
   spec.add_dependency 'parseconfig', '~>1.1'
@@ -44,6 +45,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rubocop', '~> 1.7'
   spec.add_dependency 'securerandom', '~> 0.1.0'
   spec.add_dependency 'xml-simple', '~> 1.1'
+  spec.add_dependency 'require_all', '~> 3.0.0'
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
 end

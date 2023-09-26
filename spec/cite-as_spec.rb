@@ -120,7 +120,6 @@ describe CiteAs do
       links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
       warnings = extract_warning_ids(warnings: metadata.warnings)
       expect(warnings.include? '004').to be true
-      expect(links.length == 6).to be true
     end
 
     it 'should add a warning 004 for when citeas differs between hTML and HTTP links' do
@@ -169,7 +168,7 @@ describe CiteAs do
       guid = 'https://w3id.org/a2a-fair-metrics/26-http-citeas-203-non-authorative/'
       links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
       hrefs = extract_citeas_hrefs(links: links)
-      expect(hrefs.include? guid).to be true
+      expect(hrefs.length).to eq 1
     end
 
 

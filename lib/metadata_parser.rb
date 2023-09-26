@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 module HarvesterTools
   class Error < StandardError
   end
@@ -58,19 +57,24 @@ module HarvesterTools
 
     def self.parse_rdf(body:, content_type:, metadata:)
       @meta = metadata
+      warn "1 PARSING RDF #{body}"
       unless body
         metadata.comments << "CRITICAL: The response message body component appears to have no content.\n"
         metadata.add_warning(['018', '', ''])
         return
       end
+      warn "2 PARSING RDF #{body}"
 
       unless body.match(/\w/)
         metadata.comments << "CRITICAL: The response message body component appears to have no content.\n"
         metadata.add_warning(['018', '', ''])
         return
       end
+      warn "3 PARSING RDF #{body} content type #{content_type.class}"
 
       rdfformat = RDF::Format.for(content_type: content_type)
+      warn "FORMAT #{rdfformat}"
+      warn "FORMAT #{RDF::Format.for(content_type: 'text/turtle')}"
       unless rdfformat
         metadata.comments << "CRITICAL: Found what appears to be RDF (sample:  #{body[0..300].delete!("\n")}), but it could not find a parser.  Please report this error, along with the GUID of the resource, to the maintainer of the system.\n"
         metadata.add_warning(['018', '', ''])

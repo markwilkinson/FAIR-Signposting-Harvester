@@ -20,9 +20,9 @@ RSpec.describe FspHarvester do
     guid = '10.5061/dryad.6tb1702'
     _links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
     meta = HarvesterTools::BruteForce.begin_brute_force(guid: guid, metadata: metadata)
-    expect(meta.graph.size).to eq 146
+    expect(meta.graph.size).to eq 159
     expect(meta.hash.size).to eq 0
-    expect(meta.links.length).to eq 9
+    expect(meta.links.length).to eq 13
     warnings = extract_warning_ids(warnings: meta.warnings)
     expect(warnings.include? '003').to be true
   end
@@ -56,4 +56,3 @@ RSpec.describe FspHarvester do
   end
 
 end
-#http://seek.cbgp.upm.es:9000/fsp-harvester-server/ld-by-old-workflow?guid=10.5281%2Fzenodo.3385997

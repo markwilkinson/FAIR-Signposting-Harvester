@@ -10,6 +10,7 @@ module HarvesterTools
       @meta.comments << 'INFO:  now collecting both linked data and hash-style data using the harvested links'
 
       describedby = links.select { |l| l if l.relation == 'describedby' }
+      warn "metadata harvester links length #{describedby.length}"
 
       hvst = HarvesterTools::MetadataParser.new(metadata_object: @meta) # put here because the class variable for detecting duplicates should apply to all URIs
       describedby.each do |link|
@@ -18,8 +19,10 @@ module HarvesterTools
         accepttype = { 'Accept' => accept } if accept
 
         response = attempt_to_resolve(link: link, headers: accepttype)
+        warn "\n\nRESPONSE #{response}\n\n"
 
         abbreviation, content_type = attempt_to_detect_type(body: response.body, headers: response.headers)
+        warn "ABBR #{abbreviation} CONT #{content_type}\n\n"
         unless abbreviation
           @meta.add_warning(['017', url, header])
           @meta.comments << "WARN: metadata format returned from #{url} using Accept header #{header} is not recognized.  Processing will end now.\n"
@@ -52,6 +55,7 @@ module HarvesterTools
 
     def self.process_according_to_type(body:, uri:, abbreviation:, content_type:, metadata:,
                                    harvester: HarvesterTools::MetadataParser.new(metadata_object: @meta))
+      warn "PROCESSING #{abbreviation}"
       case abbreviation
       when 'html'
         @meta.comments << 'INFO: Processing html'
@@ -63,6 +67,7 @@ module HarvesterTools
         @meta.comments << 'INFO: Processing json'
         harvester.process_json(body: body, metadata: @meta)
       when 'jsonld', 'rdfxml', 'turtle', 'ntriples', 'nquads'
+        warn "PROCESSING USING TURTLE"
         @meta.comments << 'INFO: Processing linked data'
         harvester.process_ld(body: body, content_type: content_type, metadata: @meta)
       when 'specialist'
