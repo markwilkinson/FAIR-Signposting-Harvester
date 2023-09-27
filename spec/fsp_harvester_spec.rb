@@ -16,6 +16,13 @@ RSpec.describe FspHarvester do
     expect(meta.graph.size).to eq 1
   end
 
+  it 'should find a graph of size 54 from dataverse signposting' do
+    guid = 'https://doi.org/10.7910/DVN/Z2JD58'
+    links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)
+    meta = FspHarvester::Utils.gather_metadata_from_describedby_links(links: links, metadata: metadata)
+    expect(meta.graph.size).to eq 54
+  end
+
   it 'should find a graph from a DOI the hard way' do
     guid = '10.5061/dryad.6tb1702'
     _links, metadata = HarvesterTools::Utils.resolve_guid(guid: guid)

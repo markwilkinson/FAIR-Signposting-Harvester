@@ -16,6 +16,7 @@ module HarvesterTools
       describedby.each do |link|
         accepttype = FspHarvester::ACCEPT_STAR_HEADER
         accept = link.respond_to?('type') ? link.type : nil
+        accept.gsub!('json+ld', 'ld+json')  # patch for bug in Dataverse 5.14 linksets
         accepttype = { 'Accept' => accept } if accept
 
         response = attempt_to_resolve(link: link, headers: accepttype)
