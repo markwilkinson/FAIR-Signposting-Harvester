@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fsp_harvester (0.1.27)
+    fsp_harvester (0.1.28)
       json (~> 2.0)
       linkeddata (~> 3.2)
       linkheaders-processor (~> 0.1.19)
@@ -68,7 +68,7 @@ GEM
     faraday_middleware (1.2.0)
       faraday (~> 1.0)
     fastimage (2.2.7)
-    ffi (1.15.5)
+    ffi (1.16.2)
     haml (6.1.2)
       temple (>= 0.8.2)
       thor
