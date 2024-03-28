@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../lib/harvester'
+require 'rspec'
 
 ENV['EXTRUCT_COMMAND'] = 'extruct'
 ENV['RDF_COMMAND'] = 'rdf'
